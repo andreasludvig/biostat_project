@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="quarto-1.4.515" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+
+<meta name="author" content="Andreas Svendsen" />
+<meta name="dcterms.date" content="2023-12-11" />
+
+<title>Biostat 2</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+<!-- htmldependencies:E3FAD763 -->
+<script async src="https://hypothes.is/embed.js"></script>
+<script>
+  window.document.addEventListener("DOMContentLoaded", function (_event) {
+    document.body.classList.add('hypothesis-enabled');
+  });
+</script>
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+</head>
+
+<body>
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article toc-left">
+<div id="quarto-sidebar-toc-left" class="sidebar toc-left">
+  <div id="quarto-toc-target"></div>
+</div>
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+</div>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default toc-left">
+  <div class="quarto-title-banner">
+    <div class="quarto-title column-body">
+      <h1 class="title">Biostat 2</h1>
+          </div>
+
+    
+    <div class="quarto-title-meta-container">
+      <div class="quarto-title-meta-column-start">
+            <div class="quarto-title-meta-author">
+          <div class="quarto-title-meta-heading">Author</div>
+          <div class="quarto-title-meta-heading">Affiliation</div>
+          
+                <div class="quarto-title-meta-contents">
+            <p class="author">Andreas Svendsen <a href="mailto:alosvendsen@health.sdu.dk" class="quarto-title-author-email"><i class="bi bi-envelope"></i></a> <a href="https://orcid.org/0000-0001-8050-6447" class="quarto-title-author-orcid"> <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDo1N0NEMjA4MDI1MjA2ODExOTk0QzkzNTEzRjZEQTg1NyIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDozM0NDOEJGNEZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDozM0NDOEJGM0ZGNTcxMUUxODdBOEVCODg2RjdCQ0QwOSIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOkZDN0YxMTc0MDcyMDY4MTE5NUZFRDc5MUM2MUUwNEREIiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjU3Q0QyMDgwMjUyMDY4MTE5OTRDOTM1MTNGNkRBODU3Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+84NovQAAAR1JREFUeNpiZEADy85ZJgCpeCB2QJM6AMQLo4yOL0AWZETSqACk1gOxAQN+cAGIA4EGPQBxmJA0nwdpjjQ8xqArmczw5tMHXAaALDgP1QMxAGqzAAPxQACqh4ER6uf5MBlkm0X4EGayMfMw/Pr7Bd2gRBZogMFBrv01hisv5jLsv9nLAPIOMnjy8RDDyYctyAbFM2EJbRQw+aAWw/LzVgx7b+cwCHKqMhjJFCBLOzAR6+lXX84xnHjYyqAo5IUizkRCwIENQQckGSDGY4TVgAPEaraQr2a4/24bSuoExcJCfAEJihXkWDj3ZAKy9EJGaEo8T0QSxkjSwORsCAuDQCD+QILmD1A9kECEZgxDaEZhICIzGcIyEyOl2RkgwAAhkmC+eAm0TAAAAABJRU5ErkJggg=="></a></p>
+          </div>
+                <div class="quarto-title-meta-contents">
+                    <p class="affiliation">
+                        SDU
+                      </p>
+                  </div>
+                    </div>
+        
+        <div class="quarto-title-meta">
+
+                      
+                <div>
+            <div class="quarto-title-meta-heading">Published</div>
+            <div class="quarto-title-meta-contents">
+              <p class="date">December 11, 2023</p>
+            </div>
+          </div>
+          
+                
+              </div>
+      </div>
+      <div class="quarto-title-meta-column-end quarto-other-formats-target">
+      </div>
+    </div>
+
+    <div>
+      <div class="abstract">
+        <div class="block-title">Abstract</div>
+        <p>Testing if the GLM with a poisson distribution is suitable for differential gene expresseion analysis.</p>
+      </div>
+    </div>
+
+
+    <div class="quarto-other-links-text-target">
+    </div>  </div>
+</header>
+
+  
+
+<nav id="TOC" role="doc-toc">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction"><span class="header-section-number">1</span> Introduction</a></li>
+  <li><a href="#materials-and-methods" id="toc-materials-and-methods"><span class="header-section-number">2</span> Materials and Methods</a></li>
+  <li><a href="#statistical-methods-and-results" id="toc-statistical-methods-and-results"><span class="header-section-number">3</span> Statistical methods and results</a>
+  <ul>
+  <li><a href="#exploratory-data-analysis." id="toc-exploratory-data-analysis."><span class="header-section-number">3.1</span> Exploratory data analysis.</a></li>
+  <li><a href="#filter-and-normalize-the-data" id="toc-filter-and-normalize-the-data"><span class="header-section-number">3.2</span> Filter and normalize the data</a></li>
+  <li><a href="#unsupervised-data-visualization" id="toc-unsupervised-data-visualization"><span class="header-section-number">3.3</span> Unsupervised data visualization</a></li>
+  <li><a href="#differential-gene-expression-analysis" id="toc-differential-gene-expression-analysis"><span class="header-section-number">3.4</span> Differential gene expression analysis</a></li>
+  </ul></li>
+  <li><a href="#references" id="toc-references">References</a></li>
+  </ul>
+</nav>
+<section id="introduction" class="level2" data-number="1">
+<h2 data-number="1"><span class="header-section-number">1</span> Introduction</h2>
+<p>Inflammation is a complex biological response that is pivotal in various pathological conditions. These range from systemic inflammatory diseases, such as rheumatoid arthritis and sepsis, to lower-grade chronic inflammatory states such as type 2 diabetes mellitus. Given the prevalence of systemic inflammation, understanding its interaction with drug metabolism is of substantial clinical relevance.</p>
+<p>Drug-metabolizing enzymes and transporters (DMETs), predominantly found in hepatocytes within the liver, are central to the biotransformation of a wide variety of compounds. Inflammation has been shown to modulate the activity of these DMETs, a phenomenon that could potentially affect the pharmacokinetics of numerous medications. For individuals with altered inflammatory status—whether due to a chronic condition like diabetes or an acute event like sepsis—this modulation can have significant implications. It may necessitate adjustments in drug dosages to avoid adverse effects or therapeutic failure.</p>
+<p>Previous research has provided valuable insights into the effects of inflammation on DMETs, but a clear correlation between in vitro studies and clinical observations remains elusive. For instance <em>Dunvald et al.</em> <span class="citation" data-cites="dunvald">Dunvald et al. (<a href="#ref-dunvald" role="doc-biblioref">n.d.</a>)</span> conducted a comprehensive review of the clinical and in vitro evidence on inflammation-mediated modulation of DMETs and the impact on drug metabolism in humans. They found that in vitro studies in primary human hepatocytes revealed strong evidence of downregulation of key cytochrome P450 (CYP) enzymes by inflammatory cytokines such as IL-6 and IL-1β. However, these studies often employed supraphysiological cytokine doses, which may not accurately represent the inflammatory conditions observed in patients.</p>
+<p>Levels of IL-6 and IL-1B in healthy individuals are generally low, with reports ranging from undetectable to <strong>XXX</strong> in adults <span class="citation" data-cites="kim2011 kleiner2013">(<a href="#ref-kim2011" role="doc-biblioref">Kim et al. 2011</a>; <a href="#ref-kleiner2013" role="doc-biblioref">Kleiner et al. 2013</a>)</span>. In contrast, cytokine levels may be considerably elevated with IL-6 levels of ZZZ among patients with rheumatoid arthritis (ref) to YYY for patients with acute inflammation caused by sepsis (ref). These variations in cytokine levels, which span a wide range in different pathological states, highlight the complex and dynamic nature of inflammation and underscore the need for research that considers this variability when investigating the effects of inflammation on drug-metabolizing enzymes.</p>
+<p>Recently, 3D primary human hepatocytes (PHH) have challenged 2D PHH as a more physiologically relevant culture method of PHH. 3D culture leads to more stable cell cultures that retain their hepatic phenotype for extended periods of time. Consequently, this 3D PHH have been shown to predict CYP induction and hepatotoxicity more accurately than 2D PHH (REFS). Historically, 2D PHH have been utilized to study the effect of inflammation <span class="citation" data-cites="ingelman-sundberg">Ingelman-Sundberg and Lauschke (<a href="#ref-ingelman-sundberg" role="doc-biblioref">n.d.</a>)</span> …Another claim for the lack of correlation discussed in the review by AC et al. is that there might be methodolocial limitiation to the widespread use of 2D models of PHHs.</p>
+<p>We aimed to utilize 3D primary human hepatocytes (REF, characterization article) to study the impact of physiologically relevant concentrations of cytokines on CYP expression and activity. This may help further our understanding of the impact of inflammation on clinical drug metabolism among patients with inflammation. This, in turn, may inform more precise and adaptive prescribing strategies for patients in various inflammatory states.</p>
+<p>As part of this project we wish to do a whole mRNA sequencing and differential gene expression analysis, too see which genes are up or down regulated, and subsequently do pathway analysis and gene set enrichment analysis. The first part of this sequencing analysis is the main concern of this assignment.</p>
+</section>
+<section id="materials-and-methods" class="level2" data-number="2">
+<h2 data-number="2"><span class="header-section-number">2</span> Materials and Methods</h2>
+<p>The data set consists of count data obtained from mRNA sequencing of primary human hepatocytes from a single donor. Of interest for this project there are five groups in total: one control and four treated with either 10 ng/ml or 0.1 ng/ml of IL-6 or IL-1B:</p>
+<p>• Vehicle control (no cytokine exposure)</p>
+<p>• IL-6 at 10 ng/ml</p>
+<p>• IL-6 at 0.1 ng/ml</p>
+<p>• IL-1B at 10 ng/ml</p>
+<p>• IL-1B at 0.1 ng/ml</p>
+<p>There are further samples in the data which are not directly related to this project.</p>
+<p>Each treatment and control group consists of duplicate samples, each sample originates from hepatocytes from 24 wells, with each well containing 1500 hepatocytes. Originating from one donor, these samples are pseudo-biological replicates, capturing intra-donor response variability and experimental nuances, such as differences in seeding, treatment application or other procedural variables, rather than genetic diversity/inter-individual biological variation. Although not optimal, this is exploratory data and while limiting the ability to generalize findings across a population, it allows for a nuanced understanding of cytokine effects at the individual level.</p>
+<p>Following cytokine treatment, total RNA was extracted from the hepatocytes and subjected to mRNA isolation to enrich for the coding transcripts. The mRNA was then sequenced using the Illumina NovaSeq 6000 system. Sequencing data were processed to generate .fastq files, and aligned to a reference human transcriptome. Quality controls were implemented to ensure data integrity.</p>
+<p>The primary output is a dataset of count data, specifically gene counts, which quantify the number of sequencing reads aligned to each gene, indicating gene expression levels. Accompanying this dataset are gene annotation and sample information files, which provide the foundation for the forthcoming differential gene expression analysis.</p>
+<p><strong>Purpose of analysis</strong></p>
+<p>The overarching aim of this analysis is to discern the differential gene expression profiles in primary human hepatocytes under the influence of inflammatory cytokines, specifically IL-6 and IL-1B. By comparing gene expression levels between cytokine-treated and control samples, we seek to:</p>
+<ol type="1">
+<li><p>Identify the genes that are significantly upregulated or downregulated in response to each cytokine, with an emphasis on drug metabolizing enzymes. This will allow us to compare mRNA sequencing data with qPCR data for these enzymes, providing a validation layer to the findings.</p></li>
+<li><p>Use the output of the differential gene expression analysis to, later on, conduct pathway analysis and gene set enrichment analysis to better understand the broader biological processes that are impacted by cytokine exposure.</p></li>
+<li><p>Determine whether IL-6 and IL-1B share common pathways in altering gene expression or if they act on distinct sets of genes.This might shed light on the intricacies of inflammatory responses at the molecular level.</p></li>
+<li><p>The response variable in this study is the expression level of each after treatment with cytokines relative to the expression of the controls. The hypothesis is that exposure to IL-6 and IL-1B will result in a downregulation of drug metabolizing enzymes, reflecting the inhibitory nature of inflammation on hepatic drug metabolism.</p></li>
+</ol>
+</section>
+<section id="statistical-methods-and-results" class="level2" data-number="3">
+<h2 data-number="3"><span class="header-section-number">3</span> Statistical methods and results</h2>
+<p>All data and statistical analysis is available at: <a href="https://github.com/andreasludvig/biostat_project" class="uri">https://github.com/andreasludvig/biostat_project</a></p>
+<p>As the main part of this project i will use a generalized linear model with a poisson distribution and log link to investigate if any CYP enzymes are statistically differentiated expressed in the genes that are treated with cytokines as compared to vehicle control.</p>
+<section id="exploratory-data-analysis." class="level3" data-number="3.1">
+<h3 data-number="3.1"><span class="header-section-number">3.1</span> Exploratory data analysis.</h3>
+<section id="data-content" class="level4" data-number="3.1.1">
+<h4 data-number="3.1.1"><span class="header-section-number">3.1.1</span> Data content</h4>
+<p>The matrix of gene counts, gene annotation file and sample information file are loaded, tidied and saved as an DGE_object (basically just a list). Code in <code>notebooks/00-load_data.qmd</code>. First lines and structure of each element of this DGE list:</p>
+<p><strong>Count matrix</strong>: Each column is a sample and each row is a gene with the count for each sample</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>    S1   S2   S5   S6   S7   S8  S11  S12  S13  S14  S15  S16 S17  S18  S19
+1 1327 1322 1105 2569 2696 1513 1597 1107 1681 1751 1709 1447 944 1324 3266
+2    0    0    0    2    0    2    0    0    1    0    0    0   1    0    8
+3  545  607  478 1041  694  480  644  530  620  583  866  933 569  843 1509
+4  414  482  351  778  786  529  443  429  689  684  544  544 190  411  820
+5   73   49   42  117  116   83   73   53   79  118   84   93  34   65  108
+6  163  190  123  295  188  131  152  126  258  200  154  183  61   98  403
+   S20
+1 1193
+2    1
+3  587
+4  293
+5   55
+6   90</code></pre>
+</div>
+</div>
+<p><strong>Sample info:</strong> A dataframe with information on samples</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>   group lib.size norm.factors       treatment sample_name replicate
+S1     1 27936538            1 Vehicle_control    AS0018_1         1
+S2     1 30783447            1 Vehicle_control    AS0018_2         2
+S5     2 23849669            1   01_ng_ml_IL_6    AS0018_5         1
+S6     2 50753398            1   01_ng_ml_IL_6    AS0018_6         2
+S7     3 43975254            1   10_ng_ml_IL_6    AS0018_7         1
+S8     3 28500067            1   10_ng_ml_IL_6    AS0018_8         2
+   group_color
+S1     #000000
+S2     #000000
+S5     #A6CEE3
+S6     #A6CEE3
+S7     #1F78B4
+S8     #1F78B4</code></pre>
+</div>
+</div>
+<p><strong>Gene annotation:</strong> File of gene names and symbols, matching the rows in the count matrix</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>      ENSEMBLE_ID   symbol                id_symbol
+1 ENSG00000000003   TSPAN6   ENSG00000000003;TSPAN6
+2 ENSG00000000005     TNMD     ENSG00000000005;TNMD
+3 ENSG00000000419     DPM1     ENSG00000000419;DPM1
+4 ENSG00000000457    SCYL3    ENSG00000000457;SCYL3
+5 ENSG00000000460 C1orf112 ENSG00000000460;C1orf112
+6 ENSG00000000938      FGR      ENSG00000000938;FGR</code></pre>
+</div>
+</div>
+</section>
+<section id="basic-summary-statistics-and-visualization" class="level4" data-number="3.1.2">
+<h4 data-number="3.1.2"><span class="header-section-number">3.1.2</span> Basic summary statistics and visualization</h4>
+<div class="quarto-embed-nb-cell" data-notebook="C:\Users\alosvendsen\OneDrive - Syddansk Universitet\PhD\Kurser\Biostat 2\biostat_project\notebooks\01-exploratory_data_analysis.qmd" data-notebook-title="Exploratory data analysis" data-notebook-cellId="cell-tbl-raw-sum-stats">
+<div class="cell" data-tbl-cap-location="bottom">
+<div id="tbl-raw-sum-stats" class="cell" data-tbl-cap-location="bottom">
+<figure class="quarto-float quarto-float-tbl">
+<div aria-describedby="tbl-raw-sum-stats-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="cell-output cell-output-display cell-output-markdown">
+<table class="cell">
+<thead>
+<tr class="header">
+<th></th>
+<th style="text-align: center;">S1</th>
+<th style="text-align: center;">S2</th>
+<th style="text-align: center;">S5</th>
+<th style="text-align: center;">S6</th>
+<th style="text-align: center;">S7</th>
+<th style="text-align: center;">S8</th>
+<th style="text-align: center;">S11</th>
+<th style="text-align: center;">S12</th>
+<th style="text-align: center;">S13</th>
+<th style="text-align: center;">S14</th>
+<th style="text-align: center;">S15</th>
+<th style="text-align: center;">S16</th>
+<th style="text-align: center;">S17</th>
+<th style="text-align: center;">S18</th>
+<th style="text-align: center;">S19</th>
+<th style="text-align: center;">S20</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td></td>
+<td style="text-align: center;">Min. : 0.0</td>
+<td style="text-align: center;">Min. : 0.0</td>
+<td style="text-align: center;">Min. : 0.0</td>
+<td style="text-align: center;">Min. : 0</td>
+<td style="text-align: center;">Min. : 0.0</td>
+<td style="text-align: center;">Min. : 0.0</td>
+<td style="text-align: center;">Min. : 0.0</td>
+<td style="text-align: center;">Min. : 0</td>
+<td style="text-align: center;">Min. : 0.0</td>
+<td style="text-align: center;">Min. : 0.0</td>
+<td style="text-align: center;">Min. : 0.0</td>
+<td style="text-align: center;">Min. : 0</td>
+<td style="text-align: center;">Min. : 0.0</td>
+<td style="text-align: center;">Min. : 0.0</td>
+<td style="text-align: center;">Min. : 0</td>
+<td style="text-align: center;">Min. : 0.0</td>
+</tr>
+<tr class="even">
+<td></td>
+<td style="text-align: center;">1st Qu.: 0.0</td>
+<td style="text-align: center;">1st Qu.: 0.0</td>
+<td style="text-align: center;">1st Qu.: 0.0</td>
+<td style="text-align: center;">1st Qu.: 0</td>
+<td style="text-align: center;">1st Qu.: 0.0</td>
+<td style="text-align: center;">1st Qu.: 0.0</td>
+<td style="text-align: center;">1st Qu.: 0.0</td>
+<td style="text-align: center;">1st Qu.: 0</td>
+<td style="text-align: center;">1st Qu.: 0.0</td>
+<td style="text-align: center;">1st Qu.: 0.0</td>
+<td style="text-align: center;">1st Qu.: 0.0</td>
+<td style="text-align: center;">1st Qu.: 0</td>
+<td style="text-align: center;">1st Qu.: 0.0</td>
+<td style="text-align: center;">1st Qu.: 0.0</td>
+<td style="text-align: center;">1st Qu.: 0</td>
+<td style="text-align: center;">1st Qu.: 0.0</td>
+</tr>
+<tr class="odd">
+<td></td>
+<td style="text-align: center;">Median : 0.0</td>
+<td style="text-align: center;">Median : 0.0</td>
+<td style="text-align: center;">Median : 0.0</td>
+<td style="text-align: center;">Median : 0</td>
+<td style="text-align: center;">Median : 0.0</td>
+<td style="text-align: center;">Median : 0.0</td>
+<td style="text-align: center;">Median : 0.0</td>
+<td style="text-align: center;">Median : 0</td>
+<td style="text-align: center;">Median : 0.0</td>
+<td style="text-align: center;">Median : 0.0</td>
+<td style="text-align: center;">Median : 0.0</td>
+<td style="text-align: center;">Median : 0</td>
+<td style="text-align: center;">Median : 0.0</td>
+<td style="text-align: center;">Median : 0.0</td>
+<td style="text-align: center;">Median : 0</td>
+<td style="text-align: center;">Median : 0.0</td>
+</tr>
+<tr class="even">
+<td></td>
+<td style="text-align: center;">Mean : 445.5</td>
+<td style="text-align: center;">Mean : 490.9</td>
+<td style="text-align: center;">Mean : 380.3</td>
+<td style="text-align: center;">Mean : 809</td>
+<td style="text-align: center;">Mean : 701.2</td>
+<td style="text-align: center;">Mean : 454.5</td>
+<td style="text-align: center;">Mean : 485.1</td>
+<td style="text-align: center;">Mean : 376</td>
+<td style="text-align: center;">Mean : 552.4</td>
+<td style="text-align: center;">Mean : 539.8</td>
+<td style="text-align: center;">Mean : 589.6</td>
+<td style="text-align: center;">Mean : 606</td>
+<td style="text-align: center;">Mean : 345.7</td>
+<td style="text-align: center;">Mean : 470.2</td>
+<td style="text-align: center;">Mean : 963</td>
+<td style="text-align: center;">Mean : 364.1</td>
+</tr>
+<tr class="odd">
+<td></td>
+<td style="text-align: center;">3rd Qu.: 6.0</td>
+<td style="text-align: center;">3rd Qu.: 7.0</td>
+<td style="text-align: center;">3rd Qu.: 5.0</td>
+<td style="text-align: center;">3rd Qu.: 11</td>
+<td style="text-align: center;">3rd Qu.: 8.0</td>
+<td style="text-align: center;">3rd Qu.: 5.0</td>
+<td style="text-align: center;">3rd Qu.: 7.0</td>
+<td style="text-align: center;">3rd Qu.: 6</td>
+<td style="text-align: center;">3rd Qu.: 8.0</td>
+<td style="text-align: center;">3rd Qu.: 8.0</td>
+<td style="text-align: center;">3rd Qu.: 8.0</td>
+<td style="text-align: center;">3rd Qu.: 8</td>
+<td style="text-align: center;">3rd Qu.: 5.0</td>
+<td style="text-align: center;">3rd Qu.: 6.0</td>
+<td style="text-align: center;">3rd Qu.: 14</td>
+<td style="text-align: center;">3rd Qu.: 6.0</td>
+</tr>
+<tr class="even">
+<td></td>
+<td style="text-align: center;">Max. :2538985.0</td>
+<td style="text-align: center;">Max. :2704036.0</td>
+<td style="text-align: center;">Max. :2141005.0</td>
+<td style="text-align: center;">Max. :4703701</td>
+<td style="text-align: center;">Max. :1749370.0</td>
+<td style="text-align: center;">Max. :1070663.0</td>
+<td style="text-align: center;">Max. :2310630.0</td>
+<td style="text-align: center;">Max. :1712257</td>
+<td style="text-align: center;">Max. :1676606.0</td>
+<td style="text-align: center;">Max. :1475056.0</td>
+<td style="text-align: center;">Max. :2717621.0</td>
+<td style="text-align: center;">Max. :2757600</td>
+<td style="text-align: center;">Max. :934710.0</td>
+<td style="text-align: center;">Max. :1271255.0</td>
+<td style="text-align: center;">Max. :5309784</td>
+<td style="text-align: center;">Max. :1956794.0</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-tbl" id="tbl-raw-sum-stats-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table 1: Raw summary statistics
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>From the raw summary statistics in <a href="#tbl-raw-sum-stats" class="quarto-xref">Table 1</a> we note that the data is heavily <strong>zero-inflated</strong>, as a significant portion of the counts are zero across all samples. This is not uncommon in RNA-seq data. Probably also very likely since we have just one cell type and are aligning with the entire human transcriptome. The maximum counts are substantially higher than the 75th percentile, indicating the presence of <strong>outliers or highly expressed genes</strong>. The data is heavily <strong>skewed</strong>, with mean values much higher than the median (50th percentile), which is zero in most cases.</p>
+<div class="quarto-embed-nb-cell" data-notebook="C:\Users\alosvendsen\OneDrive - Syddansk Universitet\PhD\Kurser\Biostat 2\biostat_project\notebooks\01-exploratory_data_analysis.qmd" data-notebook-title="Exploratory data analysis" data-notebook-cellId="cell-fig-boxplot-counts">
+<div id="cell-fig-boxplot-counts" class="cell">
+<div class="cell-output cell-output-display">
+<div id="fig-boxplot-counts" class="quarto-figure quarto-figure-center" height="480" width="672">
+<figure class="quarto-float quarto-float-fig">
+<div aria-describedby="fig-boxplot-counts-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="index_files/figure-html/fig-boxplot-counts-output-1.png" class="lightbox" data-description="Figure 1: Note there are &gt; 60 000 genes/sample, and these are boxplots" data-gallery="quarto-lightbox-gallery-1"><img src="index_files/figure-html/fig-boxplot-counts-output-1.png" width="672" height="480" /></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-boxplot-counts-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure 1: Note there are &gt; 60 000 genes/sample, and these are boxplots
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<p>This can also be visualized in a boxplot in <a href="#fig-boxplot-counts" class="quarto-xref">Figure 1</a></p>
+</section>
+</section>
+<section id="filter-and-normalize-the-data" class="level3" data-number="3.2">
+<h3 data-number="3.2"><span class="header-section-number">3.2</span> Filter and normalize the data</h3>
+<p>Code for filtering and normalization is in the <code>notebooks/02-filter_normalize.qmd</code> script.</p>
+<p>We are filtering genes with less than one count per million (CPM). After filtering low count genes we have filtered out 49098 genes and are left with 13612 genes, and after removal of duplicates we are left with 13610 genes.</p>
+</section>
+<section id="unsupervised-data-visualization" class="level3" data-number="3.3">
+<h3 data-number="3.3"><span class="header-section-number">3.3</span> Unsupervised data visualization</h3>
+</section>
+<section id="differential-gene-expression-analysis" class="level3" data-number="3.4">
+<h3 data-number="3.4"><span class="header-section-number">3.4</span> Differential gene expression analysis</h3>
+<p>Let <span class="math inline">\(x\)</span> denote the number of eruptions in a year. Then, <span class="math inline">\(x\)</span> can be modeled by a Poisson distribution</p>
+<p><span id="eq-poisson"><span class="math display">\[
+p(x) = \frac{e^{-\lambda} \lambda^{x}}{x !}
+\tag{1}\]</span></span></p>
+<p>where <span class="math inline">\(\lambda\)</span> is the rate of eruptions per year. Using <a href="#eq-poisson" class="quarto-xref">Equation 1</a>, the probability of an eruption in the next <span class="math inline">\(t\)</span> years can be calculated.</p>
+</section>
+</section>
+<section id="references" class="level2 unnumbered">
+<h2 class="unnumbered">References</h2>
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="ref-dunvald" class="csl-entry" role="listitem">
+Dunvald, Ann-Cathrine Dalgård, Erkka Järvinen, Christina Mortensen, and Tore B. Stage. n.d. <span>“Clinical and Molecular Perspectives on Inflammation-Mediated Regulation of Drug Metabolism and Transport.”</span> <em>Clinical Pharmacology &amp; Therapeutics</em> n/a (n/a). <a href="https://doi.org/10.1002/cpt.2432">https://doi.org/10.1002/cpt.2432</a>.
+</div>
+<div id="ref-ingelman-sundberg" class="csl-entry" role="listitem">
+Ingelman-Sundberg, Magnus, and Volker M. Lauschke. n.d. <span>“3D Human Liver Spheroids for Translational Pharmacology and Toxicology.”</span> <em>Basic &amp; Clinical Pharmacology &amp; Toxicology</em> n/a (n/a). <a href="https://doi.org/10.1111/bcpt.13587">https://doi.org/10.1111/bcpt.13587</a>.
+</div>
+<div id="ref-kim2011" class="csl-entry" role="listitem">
+Kim, Hyun Ok, Han-Soo Kim, Jong-Chan Youn, Eui-Cheol Shin, and Sungha Park. 2011. <span>“Serum Cytokine Profiles in Healthy Young and Elderly Population Assessed Using Multiplexed Bead-Based Immunoassays.”</span> <em>Journal of Translational Medicine</em> 9 (1): 113. <a href="https://doi.org/10.1186/1479-5876-9-113">https://doi.org/10.1186/1479-5876-9-113</a>.
+</div>
+<div id="ref-kleiner2013" class="csl-entry" role="listitem">
+Kleiner, Giulio, Annalisa Marcuzzi, Valentina Zanin, Lorenzo Monasta, and Giorgio Zauli. 2013. <span>“Cytokine Levels in the Serum of Healthy Subjects.”</span> <em>Mediators of Inflammation</em> 2013: 1–6. <a href="https://doi.org/10.1155/2013/434010">https://doi.org/10.1155/2013/434010</a>.
+</div>
+</div>
+</section>
+
+</main>
+<!-- /main column -->
+<script id = "quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    const typesetMath = (el) => {
+      if (window.MathJax) {
+        // MathJax Typeset
+        window.MathJax.typeset([el]);
+      } else if (window.katex) {
+        // KaTeX Render
+        var mathElements = el.getElementsByClassName("math");
+        var macros = [];
+        for (var i = 0; i < mathElements.length; i++) {
+          var texText = mathElements[i].firstChild;
+          if (mathElements[i].tagName == "SPAN") {
+            window.katex.render(texText.data, mathElements[i], {
+              displayMode: mathElements[i].classList.contains('display'),
+              throwOnError: false,
+              macros: macros,
+              fleqn: false
+            });
+          }
+        }
+      }
+    }
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        typesetMath(container);
+        return container.innerHTML
+      } else {
+        typesetMath(note);
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      typesetMath(note);
+      return note.innerHTML;
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+<script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","loop":false,"descPosition":"bottom","selector":".lightbox","openEffect":"zoom"});</script>
+
+</body>
+
+</html>
