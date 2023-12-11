@@ -5,9 +5,9 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-    <meta name="author" content="Charlotte Wickham">
+    <meta name="author" content="Andreas Svendsen">
 
-    <title>Explore Earthquakes</title>
+    <title>Load, tidy and save data</title>
     <style>
       code{white-space: pre-wrap;}
       span.smallcaps{font-variant: small-caps;}
@@ -157,9 +157,6 @@
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
-<script src="../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
-<link href="../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
-<link href="../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
      <script async="" src="https://hypothes.is/embed.js"></script>
 <script>
   window.document.addEventListener("DOMContentLoaded", function (_event) {
@@ -172,15 +169,15 @@
     <div id="quarto-embed-header" class="headroom fixed-top bg-primary">
       
       <a onclick="window.quartoBackToArticle(); return false;" class="btn btn-primary quarto-back-link" href=""><i class="bi bi-caret-left"></i> Back to Article</a>
-      <h6><i class="bi bi-journal-code"></i> Explore Earthquakes</h6>
+      <h6><i class="bi bi-journal-code"></i> Load, tidy and save data</h6>
 
-            <a href="../notebooks/explore-earthquakes.qmd" class="btn btn-primary quarto-download-embed" download="explore-earthquakes.qmd">Download Source</a>
+            <a href="../notebooks/00-load_data.qmd" class="btn btn-primary quarto-download-embed" download="00-load_data.qmd">Download Source</a>
           </div>
 
      <header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">Explore Earthquakes</h1>
+      <h1 class="title">Load, tidy and save data</h1>
           </div>
 
     
@@ -192,7 +189,7 @@
                 <div>
             <div class="quarto-title-meta-heading">Author</div>
             <div class="quarto-title-meta-contents">
-                        <p>Charlotte Wickham </p>
+                        <p>Andreas Svendsen </p>
                       </div>
           </div>
                 
@@ -216,57 +213,206 @@
 </div>
 <main class="content quarto-banner-title-block" id="quarto-document-content">      
 
-     <div class="cell-container"><div class="cell-decorator"><pre>In [1]:</pre></div><div class="cell" data-warning.hidden="true" data-message.hidden="true">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
-✔ dplyr     1.1.3     ✔ readr     2.1.4
-✔ forcats   1.0.0     ✔ stringr   1.5.0
-✔ ggplot2   3.4.3     ✔ tibble    3.2.1
-✔ lubridate 1.9.2     ✔ tidyr     1.3.0
-✔ purrr     1.0.2     
-── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
-✖ dplyr::filter() masks stats::filter()
-✖ dplyr::lag()    masks stats::lag()
-ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+     <p>Preamble</p>
+<p>Load our count matrix, gene annotation, and sample information. - Tidy the data - Create our DGEList object. Save this processed data in the output data folder</p>
+<section id="libraries" class="level4">
+<h4 class="anchored" data-anchor-id="libraries">Libraries</h4>
+<div class="cell-container"><div class="cell-decorator"><pre>In [1]:</pre></div><div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(data.table)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(RColorBrewer)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(limma)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(edgeR)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div></div>
+</section>
+<section id="load-data" class="level4">
+<h4 class="anchored" data-anchor-id="load-data">Load data</h4>
+<div class="cell-container"><div class="cell-decorator"><pre>In [2]:</pre></div><div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the count expression matrix. Rows represents genes, and columns samples.</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>expression_raw <span class="ot">&lt;-</span> <span class="fu">fread</span>(<span class="st">"inputs/data_raw/expression.txt"</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>expression_raw</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>         S1   S2   S5   S6   S7   S8  S11  S12  S13  S14  S15  S16 S17  S18
+    1: 1327 1322 1105 2569 2696 1513 1597 1107 1681 1751 1709 1447 944 1324
+    2:    0    0    0    2    0    2    0    0    1    0    0    0   1    0
+    3:  545  607  478 1041  694  480  644  530  620  583  866  933 569  843
+    4:  414  482  351  778  786  529  443  429  689  684  544  544 190  411
+    5:   73   49   42  117  116   83   73   53   79  118   84   93  34   65
+   ---                                                                     
+62706:    0    0    0    0    0    0    0    0    0    0    0    0   0    0
+62707:    0    0    0    0    0    0    0    0    0    0    0    0   0    0
+62708:    0    0    0    0    0    0    0    0    0    0    0    0   0    0
+62709:    6   27    6   10   11    2    8    4    6    3   14    4  14   20
+62710:    0    6    1    6   12    5    2    5    3    9    8   10   1    6
+        S19  S20
+    1: 3266 1193
+    2:    8    1
+    3: 1509  587
+    4:  820  293
+    5:  108   55
+   ---          
+62706:    0    0
+62707:    0    0
+62708:    0    0
+62709:    8    6
+62710:   12   10</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the sample information file</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>sample_info <span class="ot">&lt;-</span> <span class="fu">fread</span>(<span class="st">"inputs/data_raw/info.txt"</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>sample_info</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>          treatment sample_name replicate group
+ 1: Vehicle_control    AS0018_1         1     1
+ 2: Vehicle_control    AS0018_2         2     1
+ 3:   01_ng_ml_IL_6    AS0018_5         1     2
+ 4:   01_ng_ml_IL_6    AS0018_6         2     2
+ 5:   10_ng_ml_IL_6    AS0018_7         1     3
+ 6:   10_ng_ml_IL_6    AS0018_8         2     3
+ 7:  01_ng_ml_IL_1B   AS0018_11         1     4
+ 8:  01_ng_ml_IL_1B   AS0018_12         2     4
+ 9:  10_ng_ml_IL_1B   AS0018_13         1     5
+10:  10_ng_ml_IL_1B   AS0018_14         2     5
+11:             Rif   AS0018_15         1     6
+12:             Rif   AS0018_16         2     6
+13:             Abe   AS0018_17         1     7
+14:             Abe   AS0018_18         2     7
+15:          Medium   AS0018_19         1     8
+16:          Medium   AS0018_20         2     8</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the gene annotation file</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>annotation_info <span class="ot">&lt;-</span> <span class="fu">fread</span>(<span class="st">"inputs/data_raw/annotation.txt"</span>)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>annotation_info</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>           ENSEMBLE_ID          symbol
+    1: ENSG00000000003          TSPAN6
+    2: ENSG00000000005            TNMD
+    3: ENSG00000000419            DPM1
+    4: ENSG00000000457           SCYL3
+    5: ENSG00000000460        C1orf112
+   ---                                
+62706: ENSG00000291313 ENSG00000291313
+62707: ENSG00000291314 ENSG00000291314
+62708: ENSG00000291315 ENSG00000291315
+62709: ENSG00000291316 ENSG00000291316
+62710: ENSG00000291317         TMEM276</code></pre>
 </div>
 </div></div>
-<p>Read a clean version of data:</p>
-<div class="cell-container"><div class="cell-decorator"><pre>In [2]:</pre></div><div class="cell" data-warning.hidden="true" data-message.hidden="true">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>la_palma <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"la-palma.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Rows: 11347 Columns: 5
-── Column specification ────────────────────────────────────────────────────────
-Delimiter: ","
-dbl  (4): Longitude, Latitude, Depth(km), Magnitude
-dttm (1): DateTime
-
-ℹ Use `spec()` to retrieve the full column specification for this data.
-ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</section>
+<section id="tidy-data" class="level4">
+<h4 class="anchored" data-anchor-id="tidy-data">Tidy data</h4>
+<div class="cell-container"><div class="cell-decorator"><pre>In [3]:</pre></div><div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert counts data to matrix. Mostly because of convension, but also for</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co"># performance reasons. However, EdgeR do allow DFs now.</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>expression_raw <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(expression_raw)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Add a color designating group _color column to the sample info</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>color_scheme <span class="ot">&lt;-</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">brewer.pal</span>(</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">n =</span> <span class="fu">length</span>(<span class="fu">unique</span>(sample_info<span class="sc">$</span>treatment)), <span class="co"># n colors = unique treatments</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">name =</span> <span class="st">"Paired"</span> <span class="co"># Palette name to get the color hexadecimal number from.</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Add hexidecimal for black and put first in the vector.</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>color_scheme <span class="ot">&lt;-</span> <span class="fu">append</span>(color_scheme, <span class="at">values =</span> <span class="st">"#000000"</span>, <span class="at">after =</span> <span class="dv">0</span>)</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove the last hexadecimal color code, so we are back to one color/treatment</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>color_scheme <span class="ot">&lt;-</span> color_scheme[<span class="sc">-</span><span class="dv">9</span>]</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>color_scheme <span class="co"># Looks good. 8 color codes for 8 treatments</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "#000000" "#A6CEE3" "#1F78B4" "#B2DF8A" "#33A02C" "#FB9A99" "#E31A1C"
+[8] "#FDBF6F"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># label the values with in the color scheme object with the treatments names:</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>color_scheme <span class="ot">&lt;-</span> <span class="fu">setNames</span>(</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">object =</span> color_scheme,</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">nm =</span> <span class="fu">unique</span>(sample_info<span class="sc">$</span>treatment)</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>color_scheme <span class="co"># Each color code named by a treatment.</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Vehicle_control   01_ng_ml_IL_6   10_ng_ml_IL_6  01_ng_ml_IL_1B  10_ng_ml_IL_1B 
+      "#000000"       "#A6CEE3"       "#1F78B4"       "#B2DF8A"       "#33A02C" 
+            Rif             Abe          Medium 
+      "#FB9A99"       "#E31A1C"       "#FDBF6F" </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Subset the color_scheme vector by the treatment col. Add the resulting string</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="co"># to a group_color column:</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>sample_info<span class="sc">$</span>group_color <span class="ot">&lt;-</span> color_scheme[sample_info<span class="sc">$</span>treatment]</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>sample_info <span class="co"># Looks good</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>          treatment sample_name replicate group group_color
+ 1: Vehicle_control    AS0018_1         1     1     #000000
+ 2: Vehicle_control    AS0018_2         2     1     #000000
+ 3:   01_ng_ml_IL_6    AS0018_5         1     2     #A6CEE3
+ 4:   01_ng_ml_IL_6    AS0018_6         2     2     #A6CEE3
+ 5:   10_ng_ml_IL_6    AS0018_7         1     3     #1F78B4
+ 6:   10_ng_ml_IL_6    AS0018_8         2     3     #1F78B4
+ 7:  01_ng_ml_IL_1B   AS0018_11         1     4     #B2DF8A
+ 8:  01_ng_ml_IL_1B   AS0018_12         2     4     #B2DF8A
+ 9:  10_ng_ml_IL_1B   AS0018_13         1     5     #33A02C
+10:  10_ng_ml_IL_1B   AS0018_14         2     5     #33A02C
+11:             Rif   AS0018_15         1     6     #FB9A99
+12:             Rif   AS0018_16         2     6     #FB9A99
+13:             Abe   AS0018_17         1     7     #E31A1C
+14:             Abe   AS0018_18         2     7     #E31A1C
+15:          Medium   AS0018_19         1     8     #FDBF6F
+16:          Medium   AS0018_20         2     8     #FDBF6F</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert grouping variables to factors for proper plotting later on.</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>sample_info[, <span class="st">`</span><span class="at">:=</span><span class="st">`</span>(</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">group =</span> <span class="fu">factor</span>(group, <span class="at">levels =</span> <span class="fu">unique</span>(group)),</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">treatment =</span> <span class="fu">factor</span>(treatment, <span class="at">levels =</span> <span class="fu">unique</span>(treatment)),</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">group_color =</span> <span class="fu">factor</span>(group_color, <span class="at">levels =</span> <span class="fu">unique</span>(group_color))</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>)]</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(sample_info)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Classes 'data.table' and 'data.frame':  16 obs. of  5 variables:
+ $ treatment  : Factor w/ 8 levels "Vehicle_control",..: 1 1 2 2 3 3 4 4 5 5 ...
+ $ sample_name: chr  "AS0018_1" "AS0018_2" "AS0018_5" "AS0018_6" ...
+ $ replicate  : int  1 2 1 2 1 2 1 2 1 2 ...
+ $ group      : Factor w/ 8 levels "1","2","3","4",..: 1 1 2 2 3 3 4 4 5 5 ...
+ $ group_color: Factor w/ 8 levels "#000000","#A6CEE3",..: 1 1 2 2 3 3 4 4 5 5 ...
+ - attr(*, ".internal.selfref")=&lt;externalptr&gt; </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Add ensemble_id concatenated with gene symbol to the annotation dataframe</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>annotation_info[, id_symbol <span class="sc">:</span><span class="er">=</span> <span class="fu">paste</span>(ENSEMBLE_ID, symbol, <span class="at">sep =</span> <span class="st">";"</span>)]</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>annotation_info</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>           ENSEMBLE_ID          symbol                       id_symbol
+    1: ENSG00000000003          TSPAN6          ENSG00000000003;TSPAN6
+    2: ENSG00000000005            TNMD            ENSG00000000005;TNMD
+    3: ENSG00000000419            DPM1            ENSG00000000419;DPM1
+    4: ENSG00000000457           SCYL3           ENSG00000000457;SCYL3
+    5: ENSG00000000460        C1orf112        ENSG00000000460;C1orf112
+   ---                                                                
+62706: ENSG00000291313 ENSG00000291313 ENSG00000291313;ENSG00000291313
+62707: ENSG00000291314 ENSG00000291314 ENSG00000291314;ENSG00000291314
+62708: ENSG00000291315 ENSG00000291315 ENSG00000291315;ENSG00000291315
+62709: ENSG00000291316 ENSG00000291316 ENSG00000291316;ENSG00000291316
+62710: ENSG00000291317         TMEM276         ENSG00000291317;TMEM276</code></pre>
 </div>
 </div></div>
-<p>Create spatial plot:</p>
-<div class="cell-container"><div class="cell-decorator"><pre>In [3]:</pre></div><div id="cell-fig-spatial-plot" class="cell" data-warning.hidden="true" data-message.hidden="true">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">#|   against longitude."</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>la_palma <span class="sc">|&gt;</span> </span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(Longitude, Latitude)) <span class="sc">+</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">color =</span> Magnitude, <span class="at">size =</span> <span class="dv">40</span><span class="sc">-</span><span class="st">`</span><span class="at">Depth(km)</span><span class="st">`</span>)) <span class="sc">+</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_viridis_c</span>(<span class="at">direction =</span> <span class="sc">-</span><span class="dv">1</span>) <span class="sc">+</span> </span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_size</span>(<span class="at">range =</span> <span class="fu">c</span>(<span class="fl">0.5</span>, <span class="dv">2</span>), <span class="at">guide =</span> <span class="st">"none"</span>) <span class="sc">+</span></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<div id="fig-spatial-plot" class="quarto-figure quarto-figure-center anchored" width="672" alt="A scatterplot of earthquake locations plotting latitude against longitude.">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-spatial-plot-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca" class="">
-<a href="explore-earthquakes_files/figure-html/fig-spatial-plot-1.png" class="lightbox" data-description="Locations of earthquakes on La Palma since 2017" data-gallery="quarto-lightbox-gallery-1"><img src="explore-earthquakes_files/figure-html/fig-spatial-plot-1.png" class="img-fluid figure-img" alt="A scatterplot of earthquake locations plotting latitude against longitude." width="672"></a>
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-spatial-plot-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Locations of earthquakes on La Palma since 2017
-</figcaption>
-</figure>
-</div>
-</div>
+</section>
+<section id="create-dgelist" class="level4">
+<h4 class="anchored" data-anchor-id="create-dgelist">Create DGEList</h4>
+<div class="cell-container"><div class="cell-decorator"><pre>In [4]:</pre></div><div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>dge_data <span class="ot">&lt;-</span> <span class="fu">DGEList</span>(</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">counts =</span> expression_raw,</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">genes =</span> annotation_info,</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">samples =</span> sample_info</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div></div>
+</section>
+<section id="save-the-dgelist" class="level4">
+<h4 class="anchored" data-anchor-id="save-the-dgelist">Save the DGEList</h4>
+<div class="cell-container"><div class="cell-decorator"><pre>In [5]:</pre></div><div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">object =</span> dge_data,</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">file =</span> <span class="st">"outputs/data_processed/dge_data.rds"</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div></div>
+<div class="cell-container"><div class="cell-decorator"><pre>In [6]:</pre></div><div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(<span class="at">list =</span> <span class="fu">ls</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div></div>
+</section>
      </main>
 <!-- /main column -->  <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
@@ -664,6 +810,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
   }
 });
-</script>  </div> <!-- /content -->  <script>var lightboxQuarto = GLightbox({"openEffect":"zoom","loop":false,"descPosition":"bottom","selector":".lightbox","closeEffect":"zoom"});</script> 
+</script>  </div> <!-- /content --> 
   
 </body></html>

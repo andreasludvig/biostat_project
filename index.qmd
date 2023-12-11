@@ -1,5 +1,5 @@
 ---
-title: Biostat 2
+title: "Biostat 2"
 author:
   - name: Andreas Svendsen
     orcid: 0000-0001-8050-6447
@@ -10,45 +10,125 @@ author:
 abstract: |
   Testing if the GLM with a poisson distribution is suitable for differential gene expresseion analysis.
 plain-language-summary: |
-  Earthquake data for the island of La Palma from the September 2021 eruption is found ...
+  Not needed...
 date: last-modified
 bibliography: references.bib
 number-sections: true
 ---
 
+```{r}
+#| label: setup
+#| include: false
+
+library(kableExtra)
+library(limma)
+library(edgeR)
+library(data.table)
+library(ggplot2)
+
+```
+
 ## Introduction
 
-```{r}
-eruptions <- c(1492, 1585, 1646, 1677, 1712, 1949, 1971, 2021)
-n_eruptions <- length(eruptions)
-```
+Inflammation is a complex biological response that is pivotal in various pathological conditions. These range from systemic inflammatory diseases, such as rheumatoid arthritis and sepsis, to lower-grade chronic inflammatory states such as type 2 diabetes mellitus. Given the prevalence of systemic inflammation, understanding its interaction with drug metabolism is of substantial clinical relevance.
+
+Drug-metabolizing enzymes and transporters (DMETs), predominantly found in hepatocytes within the liver, are central to the biotransformation of a wide variety of compounds. Inflammation has been shown to modulate the activity of these DMETs, a phenomenon that could potentially affect the pharmacokinetics of numerous medications. For individuals with altered inflammatory status---whether due to a chronic condition like diabetes or an acute event like sepsis---this modulation can have significant implications. It may necessitate adjustments in drug dosages to avoid adverse effects or therapeutic failure.
+
+Previous research has provided valuable insights into the effects of inflammation on DMETs, but a clear correlation between in vitro studies and clinical observations remains elusive. For instance *Dunvald et al.* @dunvald conducted a comprehensive review of the clinical and in vitro evidence on inflammation-mediated modulation of DMETs and the impact on drug metabolism in humans. They found that in vitro studies in primary human hepatocytes revealed strong evidence of downregulation of key cytochrome P450 (CYP) enzymes by inflammatory cytokines such as IL-6 and IL-1β. However, these studies often employed supraphysiological cytokine doses, which may not accurately represent the inflammatory conditions observed in patients.
+
+Levels of IL-6 and IL-1B in healthy individuals are generally low, with reports ranging from undetectable to **XXX** in adults [@kim2011; @kleiner2013]. In contrast, cytokine levels may be considerably elevated with IL-6 levels of ZZZ among patients with rheumatoid arthritis (ref) to YYY for patients with acute inflammation caused by sepsis (ref). These variations in cytokine levels, which span a wide range in different pathological states, highlight the complex and dynamic nature of inflammation and underscore the need for research that considers this variability when investigating the effects of inflammation on drug-metabolizing enzymes.
+
+Recently, 3D primary human hepatocytes (PHH) have challenged 2D PHH as a more physiologically relevant culture method of PHH. 3D culture leads to more stable cell cultures that retain their hepatic phenotype for extended periods of time. Consequently, this 3D PHH have been shown to predict CYP induction and hepatotoxicity more accurately than 2D PHH (REFS). Historically, 2D PHH have been utilized to study the effect of inflammation @ingelman-sundberg ...Another claim for the lack of correlation discussed in the review by AC et al. is that there might be methodolocial limitiation to the widespread use of 2D models of PHHs.
+
+We aimed to utilize 3D primary human hepatocytes (REF, characterization article) to study the impact of physiologically relevant concentrations of cytokines on CYP expression and activity. This may help further our understanding of the impact of inflammation on clinical drug metabolism among patients with inflammation. This, in turn, may inform more precise and adaptive prescribing strategies for patients in various inflammatory states.
+
+As part of this project we wish to do a whole mRNA sequencing and differential gene expression analysis, too see which genes are up or down regulated, and subsequently do pathway analysis and gene set enrichment analysis. The first part of this sequencing analysis is the main concern of this assignment.
+
+## Materials and Methods
+
+The data set consists of count data obtained from mRNA sequencing of primary human hepatocytes from a single donor. Of interest for this project there are five groups in total: one control and four treated with either 10 ng/ml or 0.1 ng/ml of IL-6 or IL-1B:
+
+• Vehicle control (no cytokine exposure)
+
+• IL-6 at 10 ng/ml
+
+• IL-6 at 0.1 ng/ml
+
+• IL-1B at 10 ng/ml
+
+• IL-1B at 0.1 ng/ml
+
+There are further samples in the data which are not directly related to this project.
+
+Each treatment and control group consists of duplicate samples, each sample originates from hepatocytes from 24 wells, with each well containing 1500 hepatocytes. Originating from one donor, these samples are pseudo-biological replicates, capturing intra-donor response variability and experimental nuances, such as differences in seeding, treatment application or other procedural variables, rather than genetic diversity/inter-individual biological variation. Although not optimal, this is exploratory data and while limiting the ability to generalize findings across a population, it allows for a nuanced understanding of cytokine effects at the individual level.
+
+Following cytokine treatment, total RNA was extracted from the hepatocytes and subjected to mRNA isolation to enrich for the coding transcripts. The mRNA was then sequenced using the Illumina NovaSeq 6000 system. Sequencing data were processed to generate .fastq files, and aligned to a reference human transcriptome. Quality controls were implemented to ensure data integrity.
+
+The primary output is a dataset of count data, specifically gene counts, which quantify the number of sequencing reads aligned to each gene, indicating gene expression levels. Accompanying this dataset are gene annotation and sample information files, which provide the foundation for the forthcoming differential gene expression analysis.
+
+**Purpose of analysis**
+
+The overarching aim of this analysis is to discern the differential gene expression profiles in primary human hepatocytes under the influence of inflammatory cytokines, specifically IL-6 and IL-1B. By comparing gene expression levels between cytokine-treated and control samples, we seek to:
+
+1.  Identify the genes that are significantly upregulated or downregulated in response to each cytokine, with an emphasis on drug metabolizing enzymes. This will allow us to compare mRNA sequencing data with qPCR data for these enzymes, providing a validation layer to the findings.
+
+2.  Use the output of the differential gene expression analysis to, later on, conduct pathway analysis and gene set enrichment analysis to better understand the broader biological processes that are impacted by cytokine exposure.
+
+3.  Determine whether IL-6 and IL-1B share common pathways in altering gene expression or if they act on distinct sets of genes.This might shed light on the intricacies of inflammatory responses at the molecular level.
+
+4.  The response variable in this study is the expression level of each after treatment with cytokines relative to the expression of the controls. The hypothesis is that exposure to IL-6 and IL-1B will result in a downregulation of drug metabolizing enzymes, reflecting the inhibitory nature of inflammation on hepatic drug metabolism.
+
+## Statistical methods and results
+
+All data and statistical analysis is available at: <https://github.com/andreasludvig/biostat_project>
+
+As the main part of this project i will use a generalized linear model with a poisson distribution and log link to investigate if any CYP enzymes are statistically differentiated expressed in the genes that are treated with cytokines as compared to vehicle control.
+
+### Exploratory data analysis.
+
+#### Data content
+
+The matrix of gene counts, gene annotation file and sample information file are loaded, tidied and saved as an DGE_object (basically just a list). Code in `notebooks/00-load_data.qmd`. First lines and structure of each element of this DGE list:
 
 ```{r}
-#| label: fig-timeline
-#| fig-cap: Timeline of recent earthquakes on La Palma
-#| fig-alt: An event plot of the years of the last 8 eruptions on La Palma.
-#| fig-height: 1.5
-#| fig-width: 6
-par(mar = c(3, 1, 1, 1) + 0.1)
-plot(eruptions, rep(0, n_eruptions), 
-  pch = "|", axes = FALSE)
-axis(1)
-box()
+#| include: false
+dge_data <- readRDS("notebooks/outputs/data_processed/dge_data.rds")
 ```
+
+**Count matrix**: Each column is a sample and each row is a gene with the count for each sample
 
 ```{r}
-#| output: false
-avg_years_between_eruptions <- mean(diff(eruptions[-n_eruptions]))
-avg_years_between_eruptions
+# View the counts matrix
+head(dge_data$counts)
 ```
 
-Based on data up to and including 1971, eruptions on La Palma happen every `r round(avg_years_between_eruptions, 1)` years on average.
+**Sample info:** A dataframe with information on samples
 
-Studies of the magma systems feeding the volcano, such as @marrero2019, have proposed that there are two main magma reservoirs feeding the Cumbre Vieja volcano; one in the mantle (30-40km depth) which charges and in turn feeds a shallower crustal reservoir (10-20km depth).
+```{r}
+head(dge_data$samples)
+```
 
-Eight eruptions have been recorded since the late 1400s (@fig-timeline).
+**Gene annotation:** File of gene names and symbols, matching the rows in the count matrix
 
-Data and methods are discussed in @sec-data-methods.
+```{r}
+head(dge_data$genes)
+```
+
+#### Basic summary statistics and visualization
+
+{{< embed notebooks/01-exploratory_data_analysis.qmd#tbl-raw-sum-stats >}}
+
+From the raw summary statistics in @tbl-raw-sum-stats we note that the data is heavily **zero-inflated**, as a significant portion of the counts are zero across all samples. This is not uncommon in RNA-seq data. Probably also very likely since we have just one cell type and are aligning with the entire human transcriptome. The maximum counts are substantially higher than the 75th percentile, indicating the presence of **outliers or highly expressed genes**. The data is heavily **skewed**, with mean values much higher than the median (50th percentile), which is zero in most cases.
+
+{{< embed notebooks/01-exploratory_data_analysis.qmd#fig-boxplot-counts >}}
+
+This can also be visualized in a boxplot in @fig-boxplot-counts
+
+### Filter and normalize the data
+
+Code for filtering and normalization is in the `notebooks/02-filter_normalize.qmd` script.
+
+We are filtering genes with less than one count per million (CPM). After filtering low count genes we have filtered out 49098 genes and are left with 13612 genes, and after removal of duplicates we are left with 13610 genes.
 
 Let $x$ denote the number of eruptions in a year. Then, $x$ can be modeled by a Poisson distribution
 
@@ -58,35 +138,7 @@ $$ {#eq-poisson}
 
 where $\lambda$ is the rate of eruptions per year. Using @eq-poisson, the probability of an eruption in the next $t$ years can be calculated.
 
-| Name                 | Year   |
-| -------------------- | ------ |
-| Current              | 2021   |
-| Teneguía             | 1971   |
-| Nambroque            | 1949   |
-| El Charco            | 1712   |
-| Volcán San Antonio   | 1677   |
-| Volcán San Martin    | 1646   |
-| Tajuya near El Paso  | 1585   |
-| Montaña Quemada      | 1492   |
-
-: Recent historic eruptions on La Palma {#tbl-history}
-
-@tbl-history summarises the eruptions recorded since the colonization of the islands by Europeans in the late 1400s.
-
-![Map of La Palma](images/la-palma-map.png){#fig-map}
-
-La Palma is one of the west most islands in the Volcanic Archipelago of the Canary Islands (@fig-map). 
-
-{{< embed notebooks/explore-earthquakes.qmd#fig-spatial-plot >}}
-
-@fig-spatial-plot shows the location of recent Earthquakes on La Palma.
-
-## Data & Methods {#sec-data-methods}
-
-## Conclusion
-
 ## References {.unnumbered}
 
-:::{#refs}
-
+::: {#refs}
 :::

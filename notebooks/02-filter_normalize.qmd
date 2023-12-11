@@ -1,0 +1,161 @@
+---
+title: "Filter lowly expressed genes and TMM normalize"
+author: Andreas Svendsen
+---
+
+```{r}
+library(here)
+library(limma)
+library(edgeR)
+library(data.table)
+library(ggplot2)
+```
+
+### Filtering lowly expressed and duplicate genes
+
+```{r}
+# Load data
+dge_data <- readRDS("outputs/data_processed/dge_data.rds")
+```
+
+#### Filter lowly expressed genes 
+
+Many possibilities. Use the filterByExpr funtion, or filter manually, as here:
+
+```{r}
+keep <-
+  rowSums(cpm(dge_data) > 1) >= 2 # More than 1 CPM in at least 2 samples
+
+table(keep)
+```
+
+Subset data by the logical vector
+
+```{r}
+# Subset data by the logical vector
+dge_data_filtered <- dge_data[keep, keep.lib.sizes = FALSE]
+# keep.lib.sizes = FALSE, recomputes lib.sizes as number of rows changes.
+
+```
+
+Filter duplicates
+
+Keeping only the duplicated gene with the highest transcript! Get total number of reads of each gene in all samples, order decreasing order. Order them so the highest transcripted duplicate is kept.
+
+```{r}
+count_sums_ordered <-
+  order(rowSums(dge_data_filtered$counts), decreasing = TRUE)
+```
+
+This object now contains an integer vector containing the indicies of each gene in descending order of the total numer og counts in all the samples.
+
+Use this vector to order the data in descending order based on number of counts
+
+```{r}
+dge_data_filtered <- dge_data_filtered[count_sums_ordered, ]
+```
+
+Check for duplicate genes
+
+```{r}
+duplicates <- duplicated(dge_data_filtered$genes$symbol)
+sum(duplicates) # Yields two duplicates.
+```
+
+View the duplicates
+
+```{r}
+duplicates_symbols <- dge_data_filtered$genes[duplicates, "symbol"]
+dge_data_filtered$genes[dge_data_filtered$genes$symbol %in% duplicates_symbols, ]
+```
+
+If any duplicates remove them with:
+
+```{r}
+dge_data_filtered <-
+  dge_data_filtered[!duplicates, , keep.lib.sizes = FALSE]
+```
+
+### TMM normalization
+
+The normalization DOES NOT change the raw count values, but provides scaling factors that are used in subsequent analyses to adjust for library size and compositional differences.
+
+```{r}
+dge_data_norm <- normLibSizes(dge_data_filtered, method = "TMM")
+```
+
+Inspect normalisation factors
+
+```{r}
+dge_data_norm$samples$norm.factors
+```
+
+#### Visualize data after normalization
+
+Create logCPM matrices with both normalized and non-normalized libraries. By default cpm() uses lib size norm factors if presenst in DGEList.
+
+```{r}
+logcpm_before <- cpm(dge_data_filtered, log = TRUE, prior.count = 2)
+head(logcpm_before)
+
+logcpm_after <- cpm(dge_data_norm, log = TRUE, prior.count = 2)
+head(logcpm_after)
+```
+
+```{r}
+# Convert matrices to data.tables
+dt_before <- as.data.table(logcpm_before)
+dt_after <- as.data.table(logcpm_after)
+# Melt the data.tables and add a 'state' column
+dt_before <-
+  melt(dt_before,
+       measure.vars = colnames(logcpm_before),
+       variable.name = "Sample",
+       value.name = "Log2_CPM"
+  )
+dt_before[, state := "Before Normalization"]
+
+dt_after <-
+  melt(dt_after,
+       measure.vars = colnames(logcpm_after),
+       variable.name = "Sample",
+       value.name = "Log2_CPM"
+  )
+dt_after[, state := "After Normalization"]
+
+# Combine the two data.tables
+combined_dt <- rbind(dt_before, dt_after)
+
+# Boxplots using ggplot2
+p <- ggplot(combined_dt, aes(x = Sample, y = Log2_CPM)) +
+  geom_boxplot() +
+  labs(y = "Log2 CPM") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  facet_wrap(
+    ~ factor(
+      combined_dt$state,
+      levels = c("Before Normalization", "After Normalization")
+    ),
+    scales = "free_y"
+  )
+
+p
+```
+
+### Save the filtered and normalized data
+
+```{r}
+# saveRDS(dge_data_norm, file = "outputs/data_processed/dge_data_norm.rds")
+```
+
+### Normalization
+
+Normalization is crucial to account for technical biases and ensure that the counts are comparable across samples. Factors like sequencing depth, RNA composition, and library preparation can introduce variations that are not related to the underlying biology. Normalizing the data corrects for these factors.
+
+The TMM (Trimmed Mean of M-values) normalization method is a popular choice in the edgeR package for RNA-seq count data. It helps adjust for compositional differences between libraries (samples). In essence, TMM aims to make the count distributions as similar as possible across samples, so that differences in counts can be attributed to genuine differential expression rather than technical biases.
+
+RNA-seq data can be influenced by various factors, some of which are technical in nature. For example, differences in sequencing depth between samples can result in different total read counts. Another common issue is the presence of highly expressed genes that can dominate the total read count in a sample, thereby overshadowing other genes. The idea behind normalization is to adjust for these factors, so that the count data from different samples can be compared directly.
+
+#### What is TMM trying to address?
+
+When comparing two samples, if one gene is highly expressed in one sample compared to the other, it will "consume" a larger fraction of the total sequencing depth. This can create an illusion that other genes are downregulated in that sample, even if their absolute expression levels haven't changed. This phenomenon is known as the "compositional difference."
