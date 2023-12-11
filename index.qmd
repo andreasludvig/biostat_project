@@ -10,7 +10,7 @@ author:
 abstract: |
   Testing if the GLM with a poisson distribution is suitable for differential gene expresseion analysis.
 plain-language-summary: |
-  Earthquake data for the island of La Palma from the September 2021 eruption is found ...
+  Not needed...
 date: last-modified
 bibliography: references.bib
 number-sections: true
@@ -23,6 +23,9 @@ number-sections: true
 library(kableExtra)
 library(limma)
 library(edgeR)
+library(data.table)
+library(ggplot2)
+
 ```
 
 ## Introduction
@@ -87,7 +90,45 @@ As the main part of this project i will use a generalized linear model with a po
 
 The matrix of gene counts, gene annotation file and sample information file are loaded, tidied and saved as an DGE_object (basically just a list). Code in `notebooks/00-load_data.qmd`. First lines and structure of each element of this DGE list:
 
-------------------------------------------------------------------------
+```{r}
+#| include: false
+dge_data <- readRDS("notebooks/outputs/data_processed/dge_data.rds")
+```
+
+**Count matrix**: Each column is a sample and each row is a gene with the count for each sample
+
+```{r}
+# View the counts matrix
+head(dge_data$counts)
+```
+
+**Sample info:** A dataframe with information on samples
+
+```{r}
+head(dge_data$samples)
+```
+
+**Gene annotation:** File of gene names and symbols, matching the rows in the count matrix
+
+```{r}
+head(dge_data$genes)
+```
+
+#### Basic summary statistics and visualization
+
+{{< embed notebooks/01-exploratory_data_analysis.qmd#tbl-raw-sum-stats >}}
+
+From the raw summary statistics in @tbl-raw-sum-stats we note that the data is heavily **zero-inflated**, as a significant portion of the counts are zero across all samples. This is not uncommon in RNA-seq data. Probably also very likely since we have just one cell type and are aligning with the entire human transcriptome. The maximum counts are substantially higher than the 75th percentile, indicating the presence of **outliers or highly expressed genes**. The data is heavily **skewed**, with mean values much higher than the median (50th percentile), which is zero in most cases.
+
+{{< embed notebooks/01-exploratory_data_analysis.qmd#fig-boxplot-counts >}}
+
+This can also be visualized in a boxplot in @fig-boxplot-counts
+
+### Filter and normalize the data
+
+Code for filtering and normalization is in the `notebooks/02-filter_normalize.qmd` script.
+
+We are filtering genes with less than one count per million (CPM). After filtering low count genes we have filtered out 49098 genes and are left with 13612 genes, and after removal of duplicates we are left with 13610 genes.
 
 Let $x$ denote the number of eruptions in a year. Then, $x$ can be modeled by a Poisson distribution
 
@@ -96,31 +137,6 @@ p(x) = \frac{e^{-\lambda} \lambda^{x}}{x !}
 $$ {#eq-poisson}
 
 where $\lambda$ is the rate of eruptions per year. Using @eq-poisson, the probability of an eruption in the next $t$ years can be calculated.
-
-| Name                | Year |
-|---------------------|------|
-| Current             | 2021 |
-| Teneguía            | 1971 |
-| Nambroque           | 1949 |
-| El Charco           | 1712 |
-| Volcán San Antonio  | 1677 |
-| Volcán San Martin   | 1646 |
-| Tajuya near El Paso | 1585 |
-| Montaña Quemada     | 1492 |
-
-: Recent historic eruptions on La Palma {#tbl-history}
-
-@tbl-history summarises the eruptions recorded since the colonization of the islands by Europeans in the late 1400s.
-
-![Map of La Palma](images/la-palma-map.png){#fig-map}
-
-La Palma is one of the west most islands in the Volcanic Archipelago of the Canary Islands (@fig-map).
-
-{{< embed notebooks/explore-earthquakes.qmd#fig-spatial-plot >}}
-
-## Data & Methods {#sec-data-methods}
-
-## Conclusion
 
 ## References {.unnumbered}
 

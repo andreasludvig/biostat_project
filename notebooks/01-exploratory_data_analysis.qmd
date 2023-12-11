@@ -1,0 +1,67 @@
+---
+title: "Exploratory data analysis"
+author: Andreas Svendsen
+---
+
+This script provides the code for exploratory data analysis
+
+#### Libraries
+
+```{r}
+library(limma)
+library(edgeR)
+library(ggplot2)
+library(here)
+library(kableExtra)
+library(data.table)
+```
+
+#### Exploratory data analysis
+
+```{r}
+# Load the DGEList object
+dge_data <- readRDS("outputs/data_processed/dge_data.rds")
+```
+
+```{r}
+#| label: tbl-raw-sum-stats
+#| tbl-cap: "Raw summary statistics"
+#| tbl-cap-location: bottom
+raw_summary_statistics <- summary(dge_data$counts)
+
+raw_summary_statistics |> kbl(format = "simple")
+```
+
+```{r}
+# Key observations:
+# 1. Zero-Inflated: A significant portion of the counts are zeros across all
+# samples. This is not uncommon in RNA-seq data. Probably also very likely
+# since we have just one cell type and are aligning with the entire human
+# transcriptome.
+# 2. Outliers: The maximum counts are substantially higher than the 75th
+# percentile, indicating the presence of outliers or highly expressed genes.
+# 3.Skewness: The data is heavily skewed, with mean values much higher than
+# the median (50th percentile), which is zero in most cases.
+
+# # Boxplot of gene counts per sample
+# boxplot.matrix(dge_data$counts)
+```
+
+Raw counts/sample boxplot
+
+```{r}
+#| label: fig-boxplot-counts
+#| fig-cap: "Note there are > 60 000 genes/sample, and these are boxplots"
+# In ggplot:
+# Convert the matrix to a long-form data.frame for ggplot
+expression_long <- as.data.frame(as.table(dge_data$counts))
+# Create the boxplot using ggplot2
+boxplot_raw_counts <- ggplot(expression_long, aes(x=Var2, y=Freq)) +
+  geom_boxplot() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  labs(x = "Samples", y = "Expression Count") +
+  ggtitle("Distribution of Gene Expression Counts Across Samples")
+ 
+
+boxplot_raw_counts
+```
