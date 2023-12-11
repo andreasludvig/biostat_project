@@ -130,6 +130,10 @@ Code for filtering and normalization is in the `notebooks/02-filter_normalize.qm
 
 We are filtering genes with less than one count per million (CPM). After filtering low count genes we have filtered out 49098 genes and are left with 13612 genes, and after removal of duplicates we are left with 13610 genes.
 
+### Unsupervised data visualization
+
+### Differential gene expression analysis
+
 Let $x$ denote the number of eruptions in a year. Then, $x$ can be modeled by a Poisson distribution
 
 $$

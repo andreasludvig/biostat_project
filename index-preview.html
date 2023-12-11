@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
     <meta charset="utf-8">
-    <meta name="generator" content="quarto-1.4.515">
+    <meta name="generator" content="quarto-1.4.525">
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -273,6 +273,8 @@
   <ul class="collapse">
   <li><a href="#exploratory-data-analysis." id="toc-exploratory-data-analysis." class="nav-link" data-scroll-target="#exploratory-data-analysis."><span class="header-section-number">3.1</span> Exploratory data analysis.</a></li>
   <li><a href="#filter-and-normalize-the-data" id="toc-filter-and-normalize-the-data" class="nav-link" data-scroll-target="#filter-and-normalize-the-data"><span class="header-section-number">3.2</span> Filter and normalize the data</a></li>
+  <li><a href="#unsupervised-data-visualization" id="toc-unsupervised-data-visualization" class="nav-link" data-scroll-target="#unsupervised-data-visualization"><span class="header-section-number">3.3</span> Unsupervised data visualization</a></li>
+  <li><a href="#differential-gene-expression-analysis" id="toc-differential-gene-expression-analysis" class="nav-link" data-scroll-target="#differential-gene-expression-analysis"><span class="header-section-number">3.4</span> Differential gene expression analysis</a></li>
   </ul></li>
   <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
   </ul>
@@ -389,7 +391,7 @@ S8     #1F78B4</code></pre>
 </section>
 <section id="basic-summary-statistics-and-visualization" class="level4" data-number="3.1.2">
 <h4 data-number="3.1.2" class="anchored" data-anchor-id="basic-summary-statistics-and-visualization"><span class="header-section-number">3.1.2</span> Basic summary statistics and visualization</h4>
-<div class="quarto-embed-nb-cell" data-notebook="C:\Users\alosvendsen\OneDrive - Syddansk Universitet\PhD\Kurser\Biostat 2\biostat_project\notebooks\01-exploratory_data_analysis.qmd" data-notebook-title="Exploratory data analysis" data-notebook-cellid="cell-tbl-raw-sum-stats">
+<div class="quarto-embed-nb-cell" data-notebook="/home/runner/work/biostat_project/biostat_project/notebooks/01-exploratory_data_analysis.qmd" data-notebook-title="Exploratory data analysis" data-notebook-cellid="cell-tbl-raw-sum-stats">
 <div class="cell-container"><div class="cell-decorator"><pre>In [6]:</pre></div><div class="cell" data-tbl-cap-location="bottom">
 
 <div class="cell-container"><div class="cell-decorator"><pre>In [7]:</pre></div><div><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>raw_summary_statistics <span class="op">&lt;-</span> summary(dge_data$counts)</span>
@@ -547,7 +549,7 @@ Table&nbsp;1: Raw summary statistics
 </div></div>
 </div>
 <p>From the raw summary statistics in <a href="#tbl-raw-sum-stats" class="quarto-xref">Table&nbsp;1</a> we note that the data is heavily <strong>zero-inflated</strong>, as a significant portion of the counts are zero across all samples. This is not uncommon in RNA-seq data. Probably also very likely since we have just one cell type and are aligning with the entire human transcriptome. The maximum counts are substantially higher than the 75th percentile, indicating the presence of <strong>outliers or highly expressed genes</strong>. The data is heavily <strong>skewed</strong>, with mean values much higher than the median (50th percentile), which is zero in most cases.</p>
-<div class="quarto-embed-nb-cell" data-notebook="C:\Users\alosvendsen\OneDrive - Syddansk Universitet\PhD\Kurser\Biostat 2\biostat_project\notebooks\01-exploratory_data_analysis.qmd" data-notebook-title="Exploratory data analysis" data-notebook-cellid="cell-fig-boxplot-counts">
+<div class="quarto-embed-nb-cell" data-notebook="/home/runner/work/biostat_project/biostat_project/notebooks/01-exploratory_data_analysis.qmd" data-notebook-title="Exploratory data analysis" data-notebook-cellid="cell-fig-boxplot-counts">
 <div class="cell-container"><div class="cell-decorator"><pre>In [8]:</pre></div><div id="cell-fig-boxplot-counts" class="cell">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># In ggplot:</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert the matrix to a long-form data.frame for ggplot</span></span>
@@ -565,7 +567,7 @@ Table&nbsp;1: Raw summary statistics
 <div id="fig-boxplot-counts" class="quarto-figure quarto-figure-center anchored" width="672" height="480">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-boxplot-counts-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca" class="">
-<a href="index_files/figure-html/fig-boxplot-counts-output-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1" data-description="Figure&nbsp;1: Note there are > 60 000 genes/sample, and these are boxplots"><img src="index_files/figure-html/fig-boxplot-counts-output-1.png" width="672" height="480" class="figure-img"></a>
+<a href="index_files/figure-html/fig-boxplot-counts-output-1.png" class="lightbox" data-description="Figure&nbsp;1: Note there are > 60 000 genes/sample, and these are boxplots" data-gallery="quarto-lightbox-gallery-1"><img src="index_files/figure-html/fig-boxplot-counts-output-1.png" width="672" height="480" class="figure-img"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-boxplot-counts-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;1: Note there are &gt; 60 000 genes/sample, and these are boxplots
@@ -582,6 +584,12 @@ Figure&nbsp;1: Note there are &gt; 60 000 genes/sample, and these are boxplots
 <h3 data-number="3.2" class="anchored" data-anchor-id="filter-and-normalize-the-data"><span class="header-section-number">3.2</span> Filter and normalize the data</h3>
 <p>Code for filtering and normalization is in the <code>notebooks/02-filter_normalize.qmd</code> script.</p>
 <p>We are filtering genes with less than one count per million (CPM). After filtering low count genes we have filtered out 49098 genes and are left with 13612 genes, and after removal of duplicates we are left with 13610 genes.</p>
+</section>
+<section id="unsupervised-data-visualization" class="level3" data-number="3.3">
+<h3 data-number="3.3" class="anchored" data-anchor-id="unsupervised-data-visualization"><span class="header-section-number">3.3</span> Unsupervised data visualization</h3>
+</section>
+<section id="differential-gene-expression-analysis" class="level3" data-number="3.4">
+<h3 data-number="3.4" class="anchored" data-anchor-id="differential-gene-expression-analysis"><span class="header-section-number">3.4</span> Differential gene expression analysis</h3>
 <p>Let <span class="math inline">\(x\)</span> denote the number of eruptions in a year. Then, <span class="math inline">\(x\)</span> can be modeled by a Poisson distribution</p>
 <p><span id="eq-poisson"><span class="math display">\[
 p(x) = \frac{e^{-\lambda} \lambda^{x}}{x !}
@@ -1003,6 +1011,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
   }
 });
-</script>  </div> <!-- /content -->  <script>var lightboxQuarto = GLightbox({"openEffect":"zoom","loop":false,"selector":".lightbox","closeEffect":"zoom","descPosition":"bottom"});</script> 
+</script>  </div> <!-- /content -->  <script>var lightboxQuarto = GLightbox({"descPosition":"bottom","selector":".lightbox","loop":false,"closeEffect":"zoom","openEffect":"zoom"});</script> 
   
 </body></html>

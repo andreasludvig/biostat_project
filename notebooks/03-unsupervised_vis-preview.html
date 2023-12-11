@@ -7,7 +7,7 @@
 
     <meta name="author" content="Andreas Svendsen">
 
-    <title>Exploratory data analysis</title>
+    <title>Unsupervised data visualisation</title>
     <style>
       code{white-space: pre-wrap;}
       span.smallcaps{font-variant: small-caps;}
@@ -19,40 +19,6 @@
         width: 0.8em;
         margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
         vertical-align: middle;
-      }
-      /* CSS for syntax highlighting */
-      pre > code.sourceCode { white-space: pre; position: relative; }
-      pre > code.sourceCode > span { line-height: 1.25; }
-      pre > code.sourceCode > span:empty { height: 1.2em; }
-      .sourceCode { overflow: visible; }
-      code.sourceCode > span { color: inherit; text-decoration: inherit; }
-      div.sourceCode { margin: 1em 0; }
-      pre.sourceCode { margin: 0; }
-      @media screen {
-      div.sourceCode { overflow: auto; }
-      }
-      @media print {
-      pre > code.sourceCode { white-space: pre-wrap; }
-      pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-      }
-      pre.numberSource code
-        { counter-reset: source-line 0; }
-      pre.numberSource code > span
-        { position: relative; left: -4em; counter-increment: source-line; }
-      pre.numberSource code > span > a:first-child::before
-        { content: counter(source-line);
-          position: relative; left: -1em; text-align: right; vertical-align: baseline;
-          border: none; display: inline-block;
-          -webkit-touch-callout: none; -webkit-user-select: none;
-          -khtml-user-select: none; -moz-user-select: none;
-          -ms-user-select: none; user-select: none;
-          padding: 0 4px; width: 4em;
-        }
-      pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-      div.sourceCode
-        {   }
-      @media screen {
-      pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
       }
     </style>
 
@@ -157,30 +123,27 @@
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
-<script src="../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
-<link href="../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
-<link href="../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
      <script async="" src="https://hypothes.is/embed.js"></script>
 <script>
   window.document.addEventListener("DOMContentLoaded", function (_event) {
     document.body.classList.add('hypothesis-enabled');
   });
-</script>  
+</script>   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script> 
       </head>
 
   <body class="quarto-notebook">
     <div id="quarto-embed-header" class="headroom fixed-top bg-primary">
       
       <a onclick="window.quartoBackToArticle(); return false;" class="btn btn-primary quarto-back-link" href=""><i class="bi bi-caret-left"></i> Back to Article</a>
-      <h6><i class="bi bi-journal-code"></i> Exploratory data analysis</h6>
+      <h6><i class="bi bi-journal-code"></i> Unsupervised data visualisation</h6>
 
-            <a href="../notebooks/01-exploratory_data_analysis.qmd" class="btn btn-primary quarto-download-embed" download="01-exploratory_data_analysis.qmd">Download Source</a>
+            <a href="../notebooks/03-unsupervised_vis.qmd" class="btn btn-primary quarto-download-embed" download="03-unsupervised_vis.qmd">Download Source</a>
           </div>
 
      <header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">Exploratory data analysis</h1>
+      <h1 class="title">Unsupervised data visualisation</h1>
           </div>
 
     
@@ -210,229 +173,200 @@
     </div>  </div>
 </header><div id="quarto-content" class="page-columns page-rows-contents page-layout-article toc-left">
 <div id="quarto-sidebar-toc-left" class="sidebar toc-left">
-  
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#mds-plot--" id="toc-mds-plot--" class="nav-link active" data-scroll-target="#mds-plot--">MDS plot —————————————————————-</a></li>
+  <li><a href="#mds-multi-dimensionel-scaling-plot" id="toc-mds-multi-dimensionel-scaling-plot" class="nav-link" data-scroll-target="#mds-multi-dimensionel-scaling-plot">MDS (multi-dimensionel scaling) plot</a></li>
+  <li><a href="#unsupervised-data-visualization" id="toc-unsupervised-data-visualization" class="nav-link" data-scroll-target="#unsupervised-data-visualization">Unsupervised data visualization</a></li>
+  <li><a href="#change-col-names-of-the-expression-matrix-from-s1-s2-etc.-to-as0018_1-as0018_2-etc." id="toc-change-col-names-of-the-expression-matrix-from-s1-s2-etc.-to-as0018_1-as0018_2-etc." class="nav-link" data-scroll-target="#change-col-names-of-the-expression-matrix-from-s1-s2-etc.-to-as0018_1-as0018_2-etc.">Change col names of the expression matrix from S1, S2 etc. to AS0018_1, AS0018_2 etc.</a></li>
+  <li><a href="#generate-the-mds-plot-using-normalized-data." id="toc-generate-the-mds-plot-using-normalized-data." class="nav-link" data-scroll-target="#generate-the-mds-plot-using-normalized-data.">Generate the MDS plot using normalized data.</a></li>
+  <li><a href="#using-top-500-genes-with-the-highest-variability" id="toc-using-top-500-genes-with-the-highest-variability" class="nav-link" data-scroll-target="#using-top-500-genes-with-the-highest-variability">Using top 500 genes with the highest variability</a></li>
+  <li><a href="#color-points-based-on-the-group_color-column-from-the-samples-data." id="toc-color-points-based-on-the-group_color-column-from-the-samples-data." class="nav-link" data-scroll-target="#color-points-based-on-the-group_color-column-from-the-samples-data.">Color points based on the ‘group_color’ column from the samples data.</a></li>
+  <li><a href="#use-point-character-pch-16-and-size-cex-of-2.5." id="toc-use-point-character-pch-16-and-size-cex-of-2.5." class="nav-link" data-scroll-target="#use-point-character-pch-16-and-size-cex-of-2.5.">Use point character (pch) 16, and size (cex) of 2.5.</a></li>
+  <li><a href="#add-a-legend-to-the-plot-at-position-1.5--1.3" id="toc-add-a-legend-to-the-plot-at-position-1.5--1.3" class="nav-link" data-scroll-target="#add-a-legend-to-the-plot-at-position-1.5--1.3">Add a legend to the plot at position (1.5, -1.3)</a></li>
+  <li><a href="#use-unique-treatments-as-the-legend-text-and-unique-group_colors-for-the-point-colors." id="toc-use-unique-treatments-as-the-legend-text-and-unique-group_colors-for-the-point-colors." class="nav-link" data-scroll-target="#use-unique-treatments-as-the-legend-text-and-unique-group_colors-for-the-point-colors.">Use unique treatments as the legend text and unique group_colors for the point colors.</a></li>
+  <li><a href="#set-border-type-bty-to-n-to-remove-the-border." id="toc-set-border-type-bty-to-n-to-remove-the-border." class="nav-link" data-scroll-target="#set-border-type-bty-to-n-to-remove-the-border.">Set border type (bty) to “n” to remove the border.</a></li>
+  <li><a href="#save-plot-as-an-object." id="toc-save-plot-as-an-object." class="nav-link" data-scroll-target="#save-plot-as-an-object.">Save plot as an object.</a></li>
+  <li><a href="#choosing-number-of-top-variable-genes" id="toc-choosing-number-of-top-variable-genes" class="nav-link" data-scroll-target="#choosing-number-of-top-variable-genes">Choosing number of top variable genes ——————————————–</a></li>
+  <li><a href="#top-500-genes-seems-to-work-well-for-the-plot.-however-we-could-try" id="toc-top-500-genes-seems-to-work-well-for-the-plot.-however-we-could-try" class="nav-link" data-scroll-target="#top-500-genes-seems-to-work-well-for-the-plot.-however-we-could-try">Top 500 genes seems to work well for the plot. However we could try:</a></li>
+  <li><a href="#plotting-the-distribution-of-gene-variances-to-get-a-sense-of-how-many" id="toc-plotting-the-distribution-of-gene-variances-to-get-a-sense-of-how-many" class="nav-link" data-scroll-target="#plotting-the-distribution-of-gene-variances-to-get-a-sense-of-how-many">1. Plotting the distribution of gene variances to get a sense of how many</a></li>
+  <li><a href="#genes-are-highly-variable" id="toc-genes-are-highly-variable" class="nav-link" data-scroll-target="#genes-are-highly-variable">genes are highly variable</a></li>
+  <li><a href="#perform-sensitivity-analysis-running-the-mds-plot-for-different-numbers" id="toc-perform-sensitivity-analysis-running-the-mds-plot-for-different-numbers" class="nav-link" data-scroll-target="#perform-sensitivity-analysis-running-the-mds-plot-for-different-numbers">2. Perform sensitivity analysis, running the MDS plot for different numbers</a></li>
+  <li><a href="#of-top-genes-to-see-how-the-plot-changes." id="toc-of-top-genes-to-see-how-the-plot-changes." class="nav-link" data-scroll-target="#of-top-genes-to-see-how-the-plot-changes.">of top genes to see how the plot changes.</a></li>
+  <li><a href="#plotting-distribution-of-gene-variances" id="toc-plotting-distribution-of-gene-variances" class="nav-link" data-scroll-target="#plotting-distribution-of-gene-variances">1. Plotting Distribution of Gene Variances</a></li>
+  <li><a href="#a-boxplot-reveals-an-extreme-outlier" id="toc-a-boxplot-reveals-an-extreme-outlier" class="nav-link" data-scroll-target="#a-boxplot-reveals-an-extreme-outlier">A boxplot reveals an extreme outlier</a></li>
+  <li><a href="#a-hist-of-gene-variances-can-aid-in-choosing-the-number-of-top-variable-genes" id="toc-a-hist-of-gene-variances-can-aid-in-choosing-the-number-of-top-variable-genes" class="nav-link" data-scroll-target="#a-hist-of-gene-variances-can-aid-in-choosing-the-number-of-top-variable-genes">A hist of gene variances can aid in choosing the number of top variable genes</a></li>
+  <li><a href="#as-seen-in-the-histogram-a-logvariance1-of-at-least-15-16-could-be" id="toc-as-seen-in-the-histogram-a-logvariance1-of-at-least-15-16-could-be" class="nav-link" data-scroll-target="#as-seen-in-the-histogram-a-logvariance1-of-at-least-15-16-could-be">As seen in the histogram a log(variance+1) of at least ~15-16 could be</a></li>
+  <li><a href="#considered-high-variance-genes.-this-would-be-the-top" id="toc-considered-high-variance-genes.-this-would-be-the-top" class="nav-link" data-scroll-target="#considered-high-variance-genes.-this-would-be-the-top">considered high variance genes. This would be the top:</a></li>
+  <li><a href="#top_genes_list---c" id="toc-top_genes_list---c" class="nav-link" data-scroll-target="#top_genes_list---c">top_genes_list &lt;- c(</a></li>
+  <li><a href="#section" id="toc-section" class="nav-link" data-scroll-target="#section">100, 200, 300, 400, 500, 600, 700, 800,</a></li>
+  <li><a href="#section-1" id="toc-section-1" class="nav-link" data-scroll-target="#section-1">1000, 1500, 2000, 4000, 8000</a></li>
+  <li><a href="#section-2" id="toc-section-2" class="nav-link" data-scroll-target="#section-2">)</a></li>
+  <li><a href="#section-3" id="toc-section-3" class="nav-link" data-scroll-target="#section-3"></a></li>
+  <li><a href="#mds_plot_list---list" id="toc-mds_plot_list---list" class="nav-link" data-scroll-target="#mds_plot_list---list">mds_plot_list &lt;- list()</a></li>
+  <li><a href="#section-4" id="toc-section-4" class="nav-link" data-scroll-target="#section-4"></a></li>
+  <li><a href="#loop-over-the-list-and-generate-mds-plots" id="toc-loop-over-the-list-and-generate-mds-plots" class="nav-link" data-scroll-target="#loop-over-the-list-and-generate-mds-plots"># Loop over the list and generate MDS plots</a></li>
+  <li><a href="#for-top_genes-in-top_genes_list" id="toc-for-top_genes-in-top_genes_list" class="nav-link" data-scroll-target="#for-top_genes-in-top_genes_list">for (top_genes in top_genes_list) {</a></li>
+  <li><a href="#plotmdsdge_data" id="toc-plotmdsdge_data" class="nav-link" data-scroll-target="#plotmdsdge_data">plotMDS(dge_data,</a></li>
+  <li><a href="#top-top_genes" id="toc-top-top_genes" class="nav-link" data-scroll-target="#top-top_genes">top = top_genes,</a></li>
+  <li><a href="#main-pastemds-plot-for-top-top_genes-variable-genes" id="toc-main-pastemds-plot-for-top-top_genes-variable-genes" class="nav-link" data-scroll-target="#main-pastemds-plot-for-top-top_genes-variable-genes">main = paste(“MDS Plot for Top”, top_genes, “Variable Genes”),</a></li>
+  <li><a href="#col-dge_datasamplesgroup_color" id="toc-col-dge_datasamplesgroup_color" class="nav-link" data-scroll-target="#col-dge_datasamplesgroup_color">col = dge_data<span class="math inline">\(samples\)</span>group_color,</a></li>
+  <li><a href="#pch-16" id="toc-pch-16" class="nav-link" data-scroll-target="#pch-16">pch = 16</a></li>
+  <li><a href="#section-5" id="toc-section-5" class="nav-link" data-scroll-target="#section-5">)</a></li>
+  <li><a href="#legendtopright-legend-uniquedge_datasamplestreatment-col-uniquedge_datasamplesgroup_color-pch-16-bty-n" id="toc-legendtopright-legend-uniquedge_datasamplestreatment-col-uniquedge_datasamplesgroup_color-pch-16-bty-n" class="nav-link" data-scroll-target="#legendtopright-legend-uniquedge_datasamplestreatment-col-uniquedge_datasamplesgroup_color-pch-16-bty-n">legend(“topright”, legend = unique(dge_data<span class="math inline">\(samples\)</span>treatment), col = unique(dge_data<span class="math inline">\(samples\)</span>group_color), pch = 16, bty = “n”)</a></li>
+  <li><a href="#section-6" id="toc-section-6" class="nav-link" data-scroll-target="#section-6"></a></li>
+  <li><a href="#capture-the-plot-as-an-object" id="toc-capture-the-plot-as-an-object" class="nav-link" data-scroll-target="#capture-the-plot-as-an-object"># Capture the plot as an object</a></li>
+  <li><a href="#mds_plot_listtop_genes---recordplot" id="toc-mds_plot_listtop_genes---recordplot" class="nav-link" data-scroll-target="#mds_plot_listtop_genes---recordplot">mds_plot_list[[top_genes]] &lt;- recordPlot()</a></li>
+  <li><a href="#section-7" id="toc-section-7" class="nav-link" data-scroll-target="#section-7"></a></li>
+  <li><a href="#section-8" id="toc-section-8" class="nav-link" data-scroll-target="#section-8">}</a></li>
+  </ul>
+</nav>
 </div>
 <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
 </div>
 <main class="content quarto-banner-title-block" id="quarto-document-content">      
 
-     <p>This script provides the code for exploratory data analysis</p>
-<section id="libraries" class="level4">
-<h4 class="anchored" data-anchor-id="libraries">Libraries</h4>
-<div class="cell-container"><div class="cell-decorator"><pre>In [1]:</pre></div><div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(limma)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(edgeR)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(here)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>here() starts at C:/Users/alosvendsen/OneDrive - Syddansk Universitet/PhD/Kurser/Biostat 2/biostat_project</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(kableExtra)</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(data.table)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div></div>
+       <section id="mds-plot--" class="level1">
+<h1>MDS plot —————————————————————-</h1>
 </section>
-<section id="exploratory-data-analysis" class="level4">
-<h4 class="anchored" data-anchor-id="exploratory-data-analysis">Exploratory data analysis</h4>
-<div class="cell-container"><div class="cell-decorator"><pre>In [2]:</pre></div><div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the DGEList object</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>dge_data <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"outputs/data_processed/dge_data.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div></div>
-<div class="cell-container"><div class="cell-decorator"><pre>In [3]:</pre></div><div class="cell" data-tbl-cap-location="bottom">
-
-<div class="cell-container"><div class="cell-decorator"><pre>In [4]:</pre></div><div><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>raw_summary_statistics <span class="ot">&lt;-</span> <span class="fu">summary</span>(dge_data<span class="sc">$</span>counts)</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>raw_summary_statistics <span class="sc">|&gt;</span> <span class="fu">kbl</span>(<span class="at">format =</span> <span class="st">"simple"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div><div id="tbl-raw-sum-stats" class="cell anchored" data-tbl-cap-location="bottom">
-<figure class="quarto-float quarto-float-tbl figure">
-<div aria-describedby="tbl-raw-sum-stats-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="cell-output-display">
-<table class="cell table table-sm table-striped small">
-<thead>
-<tr class="header">
-<th></th>
-<th style="text-align: center;">S1</th>
-<th style="text-align: center;">S2</th>
-<th style="text-align: center;">S5</th>
-<th style="text-align: center;">S6</th>
-<th style="text-align: center;">S7</th>
-<th style="text-align: center;">S8</th>
-<th style="text-align: center;">S11</th>
-<th style="text-align: center;">S12</th>
-<th style="text-align: center;">S13</th>
-<th style="text-align: center;">S14</th>
-<th style="text-align: center;">S15</th>
-<th style="text-align: center;">S16</th>
-<th style="text-align: center;">S17</th>
-<th style="text-align: center;">S18</th>
-<th style="text-align: center;">S19</th>
-<th style="text-align: center;">S20</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td></td>
-<td style="text-align: center;">Min. : 0.0</td>
-<td style="text-align: center;">Min. : 0.0</td>
-<td style="text-align: center;">Min. : 0.0</td>
-<td style="text-align: center;">Min. : 0</td>
-<td style="text-align: center;">Min. : 0.0</td>
-<td style="text-align: center;">Min. : 0.0</td>
-<td style="text-align: center;">Min. : 0.0</td>
-<td style="text-align: center;">Min. : 0</td>
-<td style="text-align: center;">Min. : 0.0</td>
-<td style="text-align: center;">Min. : 0.0</td>
-<td style="text-align: center;">Min. : 0.0</td>
-<td style="text-align: center;">Min. : 0</td>
-<td style="text-align: center;">Min. : 0.0</td>
-<td style="text-align: center;">Min. : 0.0</td>
-<td style="text-align: center;">Min. : 0</td>
-<td style="text-align: center;">Min. : 0.0</td>
-</tr>
-<tr class="even">
-<td></td>
-<td style="text-align: center;">1st Qu.: 0.0</td>
-<td style="text-align: center;">1st Qu.: 0.0</td>
-<td style="text-align: center;">1st Qu.: 0.0</td>
-<td style="text-align: center;">1st Qu.: 0</td>
-<td style="text-align: center;">1st Qu.: 0.0</td>
-<td style="text-align: center;">1st Qu.: 0.0</td>
-<td style="text-align: center;">1st Qu.: 0.0</td>
-<td style="text-align: center;">1st Qu.: 0</td>
-<td style="text-align: center;">1st Qu.: 0.0</td>
-<td style="text-align: center;">1st Qu.: 0.0</td>
-<td style="text-align: center;">1st Qu.: 0.0</td>
-<td style="text-align: center;">1st Qu.: 0</td>
-<td style="text-align: center;">1st Qu.: 0.0</td>
-<td style="text-align: center;">1st Qu.: 0.0</td>
-<td style="text-align: center;">1st Qu.: 0</td>
-<td style="text-align: center;">1st Qu.: 0.0</td>
-</tr>
-<tr class="odd">
-<td></td>
-<td style="text-align: center;">Median : 0.0</td>
-<td style="text-align: center;">Median : 0.0</td>
-<td style="text-align: center;">Median : 0.0</td>
-<td style="text-align: center;">Median : 0</td>
-<td style="text-align: center;">Median : 0.0</td>
-<td style="text-align: center;">Median : 0.0</td>
-<td style="text-align: center;">Median : 0.0</td>
-<td style="text-align: center;">Median : 0</td>
-<td style="text-align: center;">Median : 0.0</td>
-<td style="text-align: center;">Median : 0.0</td>
-<td style="text-align: center;">Median : 0.0</td>
-<td style="text-align: center;">Median : 0</td>
-<td style="text-align: center;">Median : 0.0</td>
-<td style="text-align: center;">Median : 0.0</td>
-<td style="text-align: center;">Median : 0</td>
-<td style="text-align: center;">Median : 0.0</td>
-</tr>
-<tr class="even">
-<td></td>
-<td style="text-align: center;">Mean : 445.5</td>
-<td style="text-align: center;">Mean : 490.9</td>
-<td style="text-align: center;">Mean : 380.3</td>
-<td style="text-align: center;">Mean : 809</td>
-<td style="text-align: center;">Mean : 701.2</td>
-<td style="text-align: center;">Mean : 454.5</td>
-<td style="text-align: center;">Mean : 485.1</td>
-<td style="text-align: center;">Mean : 376</td>
-<td style="text-align: center;">Mean : 552.4</td>
-<td style="text-align: center;">Mean : 539.8</td>
-<td style="text-align: center;">Mean : 589.6</td>
-<td style="text-align: center;">Mean : 606</td>
-<td style="text-align: center;">Mean : 345.7</td>
-<td style="text-align: center;">Mean : 470.2</td>
-<td style="text-align: center;">Mean : 963</td>
-<td style="text-align: center;">Mean : 364.1</td>
-</tr>
-<tr class="odd">
-<td></td>
-<td style="text-align: center;">3rd Qu.: 6.0</td>
-<td style="text-align: center;">3rd Qu.: 7.0</td>
-<td style="text-align: center;">3rd Qu.: 5.0</td>
-<td style="text-align: center;">3rd Qu.: 11</td>
-<td style="text-align: center;">3rd Qu.: 8.0</td>
-<td style="text-align: center;">3rd Qu.: 5.0</td>
-<td style="text-align: center;">3rd Qu.: 7.0</td>
-<td style="text-align: center;">3rd Qu.: 6</td>
-<td style="text-align: center;">3rd Qu.: 8.0</td>
-<td style="text-align: center;">3rd Qu.: 8.0</td>
-<td style="text-align: center;">3rd Qu.: 8.0</td>
-<td style="text-align: center;">3rd Qu.: 8</td>
-<td style="text-align: center;">3rd Qu.: 5.0</td>
-<td style="text-align: center;">3rd Qu.: 6.0</td>
-<td style="text-align: center;">3rd Qu.: 14</td>
-<td style="text-align: center;">3rd Qu.: 6.0</td>
-</tr>
-<tr class="even">
-<td></td>
-<td style="text-align: center;">Max. :2538985.0</td>
-<td style="text-align: center;">Max. :2704036.0</td>
-<td style="text-align: center;">Max. :2141005.0</td>
-<td style="text-align: center;">Max. :4703701</td>
-<td style="text-align: center;">Max. :1749370.0</td>
-<td style="text-align: center;">Max. :1070663.0</td>
-<td style="text-align: center;">Max. :2310630.0</td>
-<td style="text-align: center;">Max. :1712257</td>
-<td style="text-align: center;">Max. :1676606.0</td>
-<td style="text-align: center;">Max. :1475056.0</td>
-<td style="text-align: center;">Max. :2717621.0</td>
-<td style="text-align: center;">Max. :2757600</td>
-<td style="text-align: center;">Max. :934710.0</td>
-<td style="text-align: center;">Max. :1271255.0</td>
-<td style="text-align: center;">Max. :5309784</td>
-<td style="text-align: center;">Max. :1956794.0</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-tbl" id="tbl-raw-sum-stats-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Raw summary statistics
-</figcaption>
-</figure>
-</div></div></div>
-</div></div>
-<div class="cell-container"><div class="cell-decorator"><pre>In [5]:</pre></div><div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Key observations:</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Zero-Inflated: A significant portion of the counts are zeros across all</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co"># samples. This is not uncommon in RNA-seq data. Probably also very likely</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co"># since we have just one cell type and are aligning with the entire human</span></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co"># transcriptome.</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Outliers: The maximum counts are substantially higher than the 75th</span></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="co"># percentile, indicating the presence of outliers or highly expressed genes.</span></span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="co"># 3.Skewness: The data is heavily skewed, with mean values much higher than</span></span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="co"># the median (50th percentile), which is zero in most cases.</span></span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="co"># # Boxplot of gene counts per sample</span></span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="co"># boxplot.matrix(dge_data$counts)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div></div>
-<p>Raw counts/sample boxplot</p>
-<div class="cell-container"><div class="cell-decorator"><pre>In [6]:</pre></div><div id="cell-fig-boxplot-counts" class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># In ggplot:</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert the matrix to a long-form data.frame for ggplot</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>expression_long <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">as.table</span>(dge_data<span class="sc">$</span>counts))</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Create the boxplot using ggplot2</span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>boxplot_raw_counts <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(expression_long, <span class="fu">aes</span>(<span class="at">x=</span>Var2, <span class="at">y=</span>Freq)) <span class="sc">+</span></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">90</span>, <span class="at">hjust =</span> <span class="dv">1</span>)) <span class="sc">+</span></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Samples"</span>, <span class="at">y =</span> <span class="st">"Expression Count"</span>) <span class="sc">+</span></span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Distribution of Gene Expression Counts Across Samples"</span>)</span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a> </span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>boxplot_raw_counts</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<div id="fig-boxplot-counts" class="quarto-figure quarto-figure-center anchored" width="672">
-<figure class="quarto-float quarto-float-fig figure">
-<div aria-describedby="fig-boxplot-counts-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca" class="">
-<a href="01-exploratory_data_analysis_files/figure-html/fig-boxplot-counts-1.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1" data-description="Note there are > 60 000 genes/sample, and these are boxplots"><img src="01-exploratory_data_analysis_files/figure-html/fig-boxplot-counts-1.png" class="img-fluid figure-img" width="672"></a>
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-boxplot-counts-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Note there are &gt; 60 000 genes/sample, and these are boxplots
-</figcaption>
-</figure>
-</div>
-</div>
-</div></div>
+<section id="mds-multi-dimensionel-scaling-plot" class="level1">
+<h1>MDS (multi-dimensionel scaling) plot</h1>
+</section>
+<section id="unsupervised-data-visualization" class="level1">
+<h1>Unsupervised data visualization</h1>
+</section>
+<section id="change-col-names-of-the-expression-matrix-from-s1-s2-etc.-to-as0018_1-as0018_2-etc." class="level1">
+<h1>Change col names of the expression matrix from S1, S2 etc. to AS0018_1, AS0018_2 etc.</h1>
+<p>colnames(dge_data<span class="math inline">\(counts) &lt;- dge_data\)</span>samples[, “treatment”]</p>
+</section>
+<section id="generate-the-mds-plot-using-normalized-data." class="level1">
+<h1>Generate the MDS plot using normalized data.</h1>
+</section>
+<section id="using-top-500-genes-with-the-highest-variability" class="level1">
+<h1>Using top 500 genes with the highest variability</h1>
+</section>
+<section id="color-points-based-on-the-group_color-column-from-the-samples-data." class="level1">
+<h1>Color points based on the ‘group_color’ column from the samples data.</h1>
+</section>
+<section id="use-point-character-pch-16-and-size-cex-of-2.5." class="level1">
+<h1>Use point character (pch) 16, and size (cex) of 2.5.</h1>
+<p>plotMDS( dge_data, top = 500, col = dge_data<span class="math inline">\(samples\)</span>group_color, pch = 16, cex = 2.5, )</p>
+</section>
+<section id="add-a-legend-to-the-plot-at-position-1.5--1.3" class="level1">
+<h1>Add a legend to the plot at position (1.5, -1.3)</h1>
+</section>
+<section id="use-unique-treatments-as-the-legend-text-and-unique-group_colors-for-the-point-colors." class="level1">
+<h1>Use unique treatments as the legend text and unique group_colors for the point colors.</h1>
+</section>
+<section id="set-border-type-bty-to-n-to-remove-the-border." class="level1">
+<h1>Set border type (bty) to “n” to remove the border.</h1>
+<p>legend(x = 1.5, y = 2.5, legend = unique(dge_data<span class="math inline">\(samples\)</span>treatment), col = unique(dge_data<span class="math inline">\(samples\)</span>group_color), pch = 16, bty = “n”)</p>
+</section>
+<section id="save-plot-as-an-object." class="level1">
+<h1>Save plot as an object.</h1>
+<p>mds_plot &lt;- recordPlot()</p>
+</section>
+<section id="choosing-number-of-top-variable-genes" class="level1">
+<h1>Choosing number of top variable genes ——————————————–</h1>
+</section>
+<section id="top-500-genes-seems-to-work-well-for-the-plot.-however-we-could-try" class="level1">
+<h1>Top 500 genes seems to work well for the plot. However we could try:</h1>
+</section>
+<section id="plotting-the-distribution-of-gene-variances-to-get-a-sense-of-how-many" class="level1">
+<h1>1. Plotting the distribution of gene variances to get a sense of how many</h1>
+</section>
+<section id="genes-are-highly-variable" class="level1">
+<h1>genes are highly variable</h1>
+</section>
+<section id="perform-sensitivity-analysis-running-the-mds-plot-for-different-numbers" class="level1">
+<h1>2. Perform sensitivity analysis, running the MDS plot for different numbers</h1>
+</section>
+<section id="of-top-genes-to-see-how-the-plot-changes." class="level1">
+<h1>of top genes to see how the plot changes.</h1>
+</section>
+<section id="plotting-distribution-of-gene-variances" class="level1">
+<h1>1. Plotting Distribution of Gene Variances</h1>
+<p>gene_variances &lt;- apply(dge_data$counts, MARGIN = 1, var) # calculate rowwise variance, ie, variance for each gene. head(gene_variances) summary(gene_variances)</p>
+</section>
+<section id="a-boxplot-reveals-an-extreme-outlier" class="level1">
+<h1>A boxplot reveals an extreme outlier</h1>
+<p>boxplot(gene_variances, main = “Boxplot of Gene Variances”) boxplot_gene_variances &lt;- recordPlot()</p>
+</section>
+<section id="a-hist-of-gene-variances-can-aid-in-choosing-the-number-of-top-variable-genes" class="level1">
+<h1>A hist of gene variances can aid in choosing the number of top variable genes</h1>
+<p>hist(log1p(gene_variances), main = “Log-transformed Distribution of Gene Variances”, xlab = “Log(Variance + 1)”, ylab = “Frequency”, breaks = 80) histogram_gene_variances &lt;- recordPlot()</p>
+</section>
+<section id="as-seen-in-the-histogram-a-logvariance1-of-at-least-15-16-could-be" class="level1">
+<h1>As seen in the histogram a log(variance+1) of at least ~15-16 could be</h1>
+</section>
+<section id="considered-high-variance-genes.-this-would-be-the-top" class="level1">
+<h1>considered high variance genes. This would be the top:</h1>
+<p>log_thresholds &lt;- c(15, 16, 17) vapply( X = log_thresholds, FUN = function(log_threshold) sum(log1p(gene_variances) &gt; log_threshold), FUN.VALUE = numeric(1) ) # 980 529 293 genes.Top 500 seems like a reasonable choice. # Also since trying different values for the top genes does not seem to change # the mds plot from 400-1000 top var genes: # 2. Sensitivity Analysis: MDS plot for Different Numbers of Top Variable Genes # List of different numbers of top variable genes to test</p>
+</section>
+<section id="top_genes_list---c" class="level1">
+<h1>top_genes_list &lt;- c(</h1>
+</section>
+<section id="section" class="level1">
+<h1>100, 200, 300, 400, 500, 600, 700, 800,</h1>
+</section>
+<section id="section-1" class="level1">
+<h1>1000, 1500, 2000, 4000, 8000</h1>
+</section>
+<section id="section-2" class="level1">
+<h1>)</h1>
+</section>
+<section id="section-3" class="level1">
+<h1></h1>
+</section>
+<section id="mds_plot_list---list" class="level1">
+<h1>mds_plot_list &lt;- list()</h1>
+</section>
+<section id="section-4" class="level1">
+<h1></h1>
+</section>
+<section id="loop-over-the-list-and-generate-mds-plots" class="level1">
+<h1># Loop over the list and generate MDS plots</h1>
+</section>
+<section id="for-top_genes-in-top_genes_list" class="level1">
+<h1>for (top_genes in top_genes_list) {</h1>
+</section>
+<section id="plotmdsdge_data" class="level1">
+<h1>plotMDS(dge_data,</h1>
+</section>
+<section id="top-top_genes" class="level1">
+<h1>top = top_genes,</h1>
+</section>
+<section id="main-pastemds-plot-for-top-top_genes-variable-genes" class="level1">
+<h1>main = paste(“MDS Plot for Top”, top_genes, “Variable Genes”),</h1>
+</section>
+<section id="col-dge_datasamplesgroup_color" class="level1">
+<h1>col = dge_data<span class="math inline">\(samples\)</span>group_color,</h1>
+</section>
+<section id="pch-16" class="level1">
+<h1>pch = 16</h1>
+</section>
+<section id="section-5" class="level1">
+<h1>)</h1>
+</section>
+<section id="legendtopright-legend-uniquedge_datasamplestreatment-col-uniquedge_datasamplesgroup_color-pch-16-bty-n" class="level1">
+<h1>legend(“topright”, legend = unique(dge_data<span class="math inline">\(samples\)</span>treatment), col = unique(dge_data<span class="math inline">\(samples\)</span>group_color), pch = 16, bty = “n”)</h1>
+</section>
+<section id="section-6" class="level1">
+<h1></h1>
+</section>
+<section id="capture-the-plot-as-an-object" class="level1">
+<h1># Capture the plot as an object</h1>
+</section>
+<section id="mds_plot_listtop_genes---recordplot" class="level1">
+<h1>mds_plot_list[[top_genes]] &lt;- recordPlot()</h1>
+</section>
+<section id="section-7" class="level1">
+<h1></h1>
+</section>
+<section id="section-8" class="level1">
+<h1>}</h1>
 </section>
      </main>
 <!-- /main column -->  <script id="quarto-html-after-body" type="application/javascript">
@@ -831,6 +765,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
   }
 });
-</script>  </div> <!-- /content -->  <script>var lightboxQuarto = GLightbox({"descPosition":"bottom","openEffect":"zoom","loop":false,"closeEffect":"zoom","selector":".lightbox"});</script> 
+</script>  </div> <!-- /content --> 
   
 </body></html>
