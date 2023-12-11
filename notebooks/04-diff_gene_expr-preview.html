@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
     <meta charset="utf-8">
-    <meta name="generator" content="quarto-1.4.525">
+    <meta name="generator" content="quarto-1.4.526">
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+    <meta name="author" content="Andreas Svendsen">
 
-    <title>diff_gene_expr</title>
+    <title>Differentiel gene expression</title>
     <style>
       code{white-space: pre-wrap;}
       span.smallcaps{font-variant: small-caps;}
@@ -18,6 +19,40 @@
         width: 0.8em;
         margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
         vertical-align: middle;
+      }
+      /* CSS for syntax highlighting */
+      pre > code.sourceCode { white-space: pre; position: relative; }
+      pre > code.sourceCode > span { line-height: 1.25; }
+      pre > code.sourceCode > span:empty { height: 1.2em; }
+      .sourceCode { overflow: visible; }
+      code.sourceCode > span { color: inherit; text-decoration: inherit; }
+      div.sourceCode { margin: 1em 0; }
+      pre.sourceCode { margin: 0; }
+      @media screen {
+      div.sourceCode { overflow: auto; }
+      }
+      @media print {
+      pre > code.sourceCode { white-space: pre-wrap; }
+      pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+      }
+      pre.numberSource code
+        { counter-reset: source-line 0; }
+      pre.numberSource code > span
+        { position: relative; left: -4em; counter-increment: source-line; }
+      pre.numberSource code > span > a:first-child::before
+        { content: counter(source-line);
+          position: relative; left: -1em; text-align: right; vertical-align: baseline;
+          border: none; display: inline-block;
+          -webkit-touch-callout: none; -webkit-user-select: none;
+          -khtml-user-select: none; -moz-user-select: none;
+          -ms-user-select: none; user-select: none;
+          padding: 0 4px; width: 4em;
+        }
+      pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+      div.sourceCode
+        {   }
+      @media screen {
+      pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
       }
     </style>
 
@@ -134,18 +169,279 @@
     <div id="quarto-embed-header" class="headroom fixed-top bg-primary">
       
       <a onclick="window.quartoBackToArticle(); return false;" class="btn btn-primary quarto-back-link" href=""><i class="bi bi-caret-left"></i> Back to Article</a>
-      <h6><i class="bi bi-journal-code"></i> 04-diff_gene_expr.qmd</h6>
+      <h6><i class="bi bi-journal-code"></i> Differentiel gene expression</h6>
 
             <a href="../notebooks/04-diff_gene_expr.qmd" class="btn btn-primary quarto-download-embed" download="04-diff_gene_expr.qmd">Download Source</a>
           </div>
 
-     <div id="quarto-content" class="page-columns page-rows-contents page-layout-article toc-left">
+     <header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Differentiel gene expression</h1>
+          </div>
+
+    
+    <div class="quarto-title-meta-container">
+      <div class="quarto-title-meta-column-start">
+        
+        <div class="quarto-title-meta">
+
+                <div>
+            <div class="quarto-title-meta-heading">Author</div>
+            <div class="quarto-title-meta-contents">
+                        <p>Andreas Svendsen </p>
+                      </div>
+          </div>
+                
+          
+                
+              </div>
+      </div>
+      <div class="quarto-title-meta-column-end quarto-other-formats-target">
+      </div>
+    </div>
+
+
+
+    <div class="quarto-other-links-text-target">
+    </div>  </div>
+</header><div id="quarto-content" class="page-columns page-rows-contents page-layout-article toc-left">
 <div id="quarto-sidebar-toc-left" class="sidebar toc-left">
   
 </div>
 <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
 </div>
-<main class="content quarto-banner-title-block" id="quarto-document-content">    
+<main class="content quarto-banner-title-block" id="quarto-document-content">      
+
+     <div class="cell-container"><div class="cell-decorator"><pre>In [1]:</pre></div><div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(data.table)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(limma)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(edgeR)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(broom)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div></div>
+<p>For this project we will just look at the CYP enzymes in the dataset</p>
+<p>Import the filtered and normalised data</p>
+<div class="cell-container"><div class="cell-decorator"><pre>In [2]:</pre></div><div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>dge_data_norm <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"outputs/data_processed/dge_data_norm.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div></div>
+<div class="cell-container"><div class="cell-decorator"><pre>In [3]:</pre></div><div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>keep_indices <span class="ot">&lt;-</span> <span class="fu">grep</span>(<span class="st">"^CYP"</span>, dge_data_norm<span class="sc">$</span>genes<span class="sc">$</span>symbol)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>cyp_data <span class="ot">&lt;-</span> dge_data_norm[keep_indices, keep.lib.sizes <span class="ot">=</span> <span class="cn">FALSE</span>]</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>cyp_data</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>An object of class "DGEList"
+$counts
+          S1     S2     S5     S6     S7     S8    S11    S12    S13    S14
+10537 244845 249729 199006 425694  91101  74426 204959 153888  37562  24714
+3275  145411 139719 130302 270922 153799 100256 166322 139129 139223 131577
+7606  114762 117381  97862 216134  71868  53548  98347  78604  59463  52498
+7973   70586  83376  68178 143783  76489  51577  78570  56730  38888  33020
+17385  49761  56129  41159  82353  10675   8117  50186  41031  40425  36299
+         S15    S16   S17    S18    S19    S20
+10537 802526 883195 61170  88579 436836 166170
+3275  245926 250821 74993 129204 326703 116288
+7606  173919 186999 28389  46772 204208  70775
+7973   76718  73618 24882  43597 165762  55073
+17385 129983 146769  5595   8262 113872  42412
+42 more rows ...
+
+$samples
+   group lib.size norm.factors       treatment sample_name replicate
+S1     1   802098    0.9784508 Vehicle_control    AS0018_1         1
+S2     1   844460    1.0028307 Vehicle_control    AS0018_2         2
+S5     2   684779    0.9865491   01_ng_ml_IL_6    AS0018_5         1
+S6     2  1454659    0.9878487   01_ng_ml_IL_6    AS0018_6         2
+S7     3   567988    0.9016617   10_ng_ml_IL_6    AS0018_7         1
+   group_color
+S1     #000000
+S2     #000000
+S5     #A6CEE3
+S6     #A6CEE3
+S7     #1F78B4
+11 more rows ...
+
+$genes
+          ENSEMBLE_ID symbol              id_symbol
+10537 ENSG00000160868 CYP3A4 ENSG00000160868;CYP3A4
+3275  ENSG00000106258 CYP3A5 ENSG00000106258;CYP3A5
+7606  ENSG00000138109 CYP2C9 ENSG00000138109;CYP2C9
+7973  ENSG00000140505 CYP1A2 ENSG00000140505;CYP1A2
+17385 ENSG00000197408 CYP2B6 ENSG00000197408;CYP2B6
+42 more rows ...</code></pre>
+</div>
+</div></div>
+<p>When using the basic poisson regression model we assume that counts are poisson distribted with a mean equal to the variance. This model does not inherently account for library size or composition effect.</p>
+<div class="cell-container"><div class="cell-decorator"><pre>In [4]:</pre></div><div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># cyp_data is the subset of genes we want to investigate</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>counts <span class="ot">&lt;-</span> cyp_data<span class="sc">$</span>counts</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>genes <span class="ot">&lt;-</span> <span class="fu">rownames</span>(counts)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>samples <span class="ot">&lt;-</span> <span class="fu">colnames</span>(counts)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Creating a long-format data frame</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>data_long <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">gene =</span> <span class="fu">rep</span>(genes, <span class="at">each =</span> <span class="fu">length</span>(samples)),</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>                        <span class="at">sample =</span> <span class="fu">rep</span>(samples, <span class="at">times =</span> <span class="fu">length</span>(genes)),</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>                        <span class="at">count =</span> <span class="fu">as.vector</span>(counts),</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>                        <span class="at">treatment =</span> cyp_data<span class="sc">$</span>samples<span class="sc">$</span>treatment) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div></div>
+<div class="cell-container"><div class="cell-decorator"><pre>In [5]:</pre></div><div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Select the first gene</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>first_gene <span class="ot">&lt;-</span> <span class="fu">unique</span>(data_long<span class="sc">$</span>gene)[<span class="dv">1</span>]</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>first_gene_data <span class="ot">&lt;-</span> <span class="fu">subset</span>(data_long, gene <span class="sc">==</span> first_gene)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co"># For each cytokine treatment, create a binary variable that is 1 for that specific cytokine treatment and 0 for the vehicle control.</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>first_gene_data<span class="sc">$</span>treatment_IL_6_01_ng_ml <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(first_gene_data<span class="sc">$</span>treatment <span class="sc">==</span> <span class="st">"01_ng_ml_IL_6"</span>)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>first_gene_data<span class="sc">$</span>treatment_IL_6_10_ng_ml <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(first_gene_data<span class="sc">$</span>treatment <span class="sc">==</span> <span class="st">"10_ng_ml_IL_6"</span>)</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>first_gene_data<span class="sc">$</span>treatment_IL_1B_01_ng_ml <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(first_gene_data<span class="sc">$</span>treatment <span class="sc">==</span> <span class="st">"01_ng_ml_IL_1B"</span>)</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>first_gene_data<span class="sc">$</span>treatment_IL_1B_10_ng_ml <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(first_gene_data<span class="sc">$</span>treatment <span class="sc">==</span> <span class="st">"10_ng_ml_IL_1B"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div></div>
+<div class="cell-container"><div class="cell-decorator"><pre>In [6]:</pre></div><div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Poisson models for each cytokine treatment</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>poisson_model_IL_6_01_ng_ml <span class="ot">&lt;-</span> <span class="fu">glm</span>(count <span class="sc">~</span> treatment_IL_6_01_ng_ml, <span class="at">family =</span> <span class="fu">poisson</span>(), <span class="at">data =</span> first_gene_data)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>poisson_model_IL_6_10_ng_ml <span class="ot">&lt;-</span> <span class="fu">glm</span>(count <span class="sc">~</span> treatment_IL_6_10_ng_ml, <span class="at">family =</span> <span class="fu">poisson</span>(), <span class="at">data =</span> first_gene_data)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>poisson_model_IL_1B_01_ng_ml <span class="ot">&lt;-</span> <span class="fu">glm</span>(count <span class="sc">~</span> treatment_IL_1B_01_ng_ml, <span class="at">family =</span> <span class="fu">poisson</span>(), <span class="at">data =</span> first_gene_data)</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>poisson_model_IL_1B_10_ng_ml <span class="ot">&lt;-</span> <span class="fu">glm</span>(count <span class="sc">~</span> treatment_IL_1B_10_ng_ml, <span class="at">family =</span> <span class="fu">poisson</span>(), <span class="at">data =</span> first_gene_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div></div>
+<div class="cell-container"><div class="cell-decorator"><pre>In [7]:</pre></div><div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(poisson_model_IL_6_01_ng_ml)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+glm(formula = count ~ treatment_IL_6_01_ng_ml, family = poisson(), 
+    data = first_gene_data)
+
+Coefficients:
+                         Estimate Std. Error z value Pr(&gt;|z|)    
+(Intercept)             10.669258   0.001289    8279   &lt;2e-16 ***
+treatment_IL_6_01_ng_ml  0.767586   0.002656     289   &lt;2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for poisson family taken to be 1)
+
+    Null deviance: 1016536  on 15  degrees of freedom
+Residual deviance:  944330  on 14  degrees of freedom
+AIC: 944524
+
+Number of Fisher Scoring iterations: 6</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(poisson_model_IL_6_10_ng_ml)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+glm(formula = count ~ treatment_IL_6_10_ng_ml, family = poisson(), 
+    data = first_gene_data)
+
+Coefficients:
+                         Estimate Std. Error z value Pr(&gt;|z|)    
+(Intercept)             10.835898   0.001186 9139.33   &lt;2e-16 ***
+treatment_IL_6_10_ng_ml -0.288519   0.003813  -75.67   &lt;2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for poisson family taken to be 1)
+
+    Null deviance: 1016536  on 15  degrees of freedom
+Residual deviance: 1010347  on 14  degrees of freedom
+AIC: 1010541
+
+Number of Fisher Scoring iterations: 6</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(poisson_model_IL_1B_01_ng_ml)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+glm(formula = count ~ treatment_IL_1B_01_ng_ml, family = poisson(), 
+    data = first_gene_data)
+
+Coefficients:
+                          Estimate Std. Error z value Pr(&gt;|z|)    
+(Intercept)              10.878530   0.001161  9373.5   &lt;2e-16 ***
+treatment_IL_1B_01_ng_ml -0.853444   0.004846  -176.1   &lt;2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for poisson family taken to be 1)
+
+    Null deviance: 1016536  on 15  degrees of freedom
+Residual deviance:  976359  on 14  degrees of freedom
+AIC: 976553
+
+Number of Fisher Scoring iterations: 5</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(poisson_model_IL_1B_10_ng_ml)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+glm(formula = count ~ treatment_IL_1B_10_ng_ml, family = poisson(), 
+    data = first_gene_data)
+
+Coefficients:
+                          Estimate Std. Error z value Pr(&gt;|z|)    
+(Intercept)              10.883578   0.001158  9401.5   &lt;2e-16 ***
+treatment_IL_1B_10_ng_ml -0.945326   0.005048  -187.3   &lt;2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for poisson family taken to be 1)
+
+    Null deviance: 1016536  on 15  degrees of freedom
+Residual deviance:  969605  on 14  degrees of freedom
+AIC: 969800
+
+Number of Fisher Scoring iterations: 5</code></pre>
+</div>
+</div></div>
+<p>Creating a summary table:</p>
+<div class="cell-container"><div class="cell-decorator"><pre>In [8]:</pre></div><div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Creating a summary data frame</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>summary_data <span class="ot">&lt;-</span> </span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data.frame</span>(</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">Treatment =</span> </span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>      <span class="fu">c</span>(<span class="st">"IL-6 01 ng/ml"</span>, <span class="st">"IL-6 10 ng/ml"</span>, <span class="st">"IL-1B 01 ng/ml"</span>, <span class="st">"IL-1B 10 ng/ml"</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>        ),</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">Log_Expected_Count_Intercept =</span> </span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>      <span class="fu">c</span>(<span class="fu">coef</span>(poisson_model_IL_6_01_ng_ml)[<span class="st">"(Intercept)"</span>],</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>        <span class="fu">coef</span>(poisson_model_IL_6_10_ng_ml)[<span class="st">"(Intercept)"</span>],</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>        <span class="fu">coef</span>(poisson_model_IL_1B_01_ng_ml)[<span class="st">"(Intercept)"</span>],</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>        <span class="fu">coef</span>(poisson_model_IL_1B_10_ng_ml)[<span class="st">"(Intercept)"</span>]</span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>        ),</span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">Coefficient =</span> </span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>      <span class="fu">c</span>(<span class="fu">coef</span>(poisson_model_IL_6_01_ng_ml)[<span class="st">"treatment_IL_6_01_ng_ml"</span>],</span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>        <span class="fu">coef</span>(poisson_model_IL_6_10_ng_ml)[<span class="st">"treatment_IL_6_10_ng_ml"</span>],</span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>        <span class="fu">coef</span>(poisson_model_IL_1B_01_ng_ml)[<span class="st">"treatment_IL_1B_01_ng_ml"</span>],</span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>        <span class="fu">coef</span>(poisson_model_IL_1B_10_ng_ml)[<span class="st">"treatment_IL_1B_10_ng_ml"</span>]),</span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">P_Value =</span> <span class="fu">c</span>(<span class="fu">summary</span>(poisson_model_IL_6_01_ng_ml)<span class="sc">$</span>coefficients[<span class="st">"treatment_IL_6_01_ng_ml"</span>, <span class="st">"Pr(&gt;|z|)"</span>],</span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a>                <span class="fu">summary</span>(poisson_model_IL_6_10_ng_ml)<span class="sc">$</span>coefficients[<span class="st">"treatment_IL_6_10_ng_ml"</span>, <span class="st">"Pr(&gt;|z|)"</span>],</span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a>                <span class="fu">summary</span>(poisson_model_IL_1B_01_ng_ml)<span class="sc">$</span>coefficients[<span class="st">"treatment_IL_1B_01_ng_ml"</span>, <span class="st">"Pr(&gt;|z|)"</span>],</span>
+<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a>                <span class="fu">summary</span>(poisson_model_IL_1B_10_ng_ml)<span class="sc">$</span>coefficients[<span class="st">"treatment_IL_1B_10_ng_ml"</span>, <span class="st">"Pr(&gt;|z|)"</span>]</span>
+<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a>                )</span>
+<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb16-24"><a href="#cb16-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-25"><a href="#cb16-25" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculating actual expected counts and fold changes</span></span>
+<span id="cb16-26"><a href="#cb16-26" aria-hidden="true" tabindex="-1"></a>summary_data<span class="sc">$</span>Expected_Count <span class="ot">=</span> <span class="fu">exp</span>(summary_data<span class="sc">$</span>Log_Expected_Count_Intercept)</span>
+<span id="cb16-27"><a href="#cb16-27" aria-hidden="true" tabindex="-1"></a>summary_data<span class="sc">$</span>Fold_Change <span class="ot">=</span> <span class="fu">exp</span>(summary_data<span class="sc">$</span>Coefficient)</span>
+<span id="cb16-28"><a href="#cb16-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-29"><a href="#cb16-29" aria-hidden="true" tabindex="-1"></a><span class="fu">row.names</span>(summary_data) <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
+<span id="cb16-30"><a href="#cb16-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-31"><a href="#cb16-31" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the summary table</span></span>
+<span id="cb16-32"><a href="#cb16-32" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(summary_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       Treatment Log_Expected_Count_Intercept Coefficient P_Value
+1  IL-6 01 ng/ml                     10.66926   0.7675856       0
+2  IL-6 10 ng/ml                     10.83590  -0.2885188       0
+3 IL-1B 01 ng/ml                     10.87853  -0.8534440       0
+4 IL-1B 10 ng/ml                     10.88358  -0.9453265       0
+  Expected_Count Fold_Change
+1       43013.00   2.1545579
+2       50812.50   0.7493727
+3       53025.57   0.4259454
+4       53293.93   0.3885527</code></pre>
+</div>
+</div></div>
+<p><br>
+</p>
      </main>
 <!-- /main column -->  <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {

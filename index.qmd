@@ -25,7 +25,6 @@ library(limma)
 library(edgeR)
 library(data.table)
 library(ggplot2)
-
 ```
 
 ## Introduction
@@ -134,13 +133,101 @@ We are filtering genes with less than one count per million (CPM). After filteri
 
 ### Differential gene expression analysis
 
-Let $x$ denote the number of eruptions in a year. Then, $x$ can be modeled by a Poisson distribution
+For this project, we will fit a Generalized Linear Model (GLM) using the Poisson distribution with a log link function. Our primary interest lies in comparing treated vs. untreated samples, regardless of the concentration. This approach is chosen over a more nuanced model incorporating concentrations as a continuous variable due to the limited variation in concentrations (only two per treatment), which might not provide robust estimations in a continuous model.
 
-$$
-p(x) = \frac{e^{-\lambda} \lambda^{x}}{x !}
-$$ {#eq-poisson}
+The model we will use is:
 
-where $\lambda$ is the rate of eruptions per year. Using @eq-poisson, the probability of an eruption in the next $t$ years can be calculated.
+$log(\lambda) = \alpha + \beta_1*x_1$ ,
+
+where $\lambda$ represents the expected count, $\alpha$ is the baseline rate of counts for the untreated group, and $\beta_1$ is the rate ratio for the treatment effect. In this model, $x_1$ is a binary indicator for treatment, with 0 indicating control (untreated) and 1 indicating treated samples.
+
+This formual also translates to log(rate) = baselinerate/unexposed_rate \* exposure_rate_ratio
+
+Poisson regression is appropriate for modeling count data where the dependent variable is assumed to follow a Poisson distribution. This model assumes that the logarithm of the expected count is linearly related to the independent variables. A critical assumption of the Poisson model is that the mean equals the variance, a condition often violated in RNA-seq data due to overdispersion. Therefore, this analysis serves as an initial step, and more sophisticated models may be required for a complete understanding of the dataset.
+
+```{r}
+dge_data_norm <- readRDS("notebooks/outputs/data_processed/dge_data_norm.rds")
+
+
+keep_indices <- grep("^CYP", dge_data_norm$genes$symbol)
+
+cyp_data <- dge_data_norm[keep_indices, keep.lib.sizes = FALSE]
+
+
+# cyp_data is the subset of genes we want to investigate
+counts <- cyp_data$counts
+genes <- rownames(counts)
+samples <- colnames(counts)
+
+# Creating a long-format data frame
+data_long <- data.frame(gene = rep(genes, each = length(samples)),
+                        sample = rep(samples, times = length(genes)),
+                        count = as.vector(counts),
+                        treatment = cyp_data$samples$treatment)
+
+# Select the first gene
+first_gene <- unique(data_long$gene)[1]
+first_gene_data <- subset(data_long, gene == first_gene)
+
+# For each cytokine treatment, create a binary variable that is 1 for that specific cytokine treatment and 0 for the vehicle control.
+
+first_gene_data$treatment_IL_6_01_ng_ml <- as.numeric(first_gene_data$treatment == "01_ng_ml_IL_6")
+first_gene_data$treatment_IL_6_10_ng_ml <- as.numeric(first_gene_data$treatment == "10_ng_ml_IL_6")
+first_gene_data$treatment_IL_1B_01_ng_ml <- as.numeric(first_gene_data$treatment == "01_ng_ml_IL_1B")
+first_gene_data$treatment_IL_1B_10_ng_ml <- as.numeric(first_gene_data$treatment == "10_ng_ml_IL_1B")
+```
+
+```{r}
+# Poisson models for each cytokine treatment
+poisson_model_IL_6_01_ng_ml <- glm(count ~ treatment_IL_6_01_ng_ml, family = poisson(), data = first_gene_data)
+poisson_model_IL_6_10_ng_ml <- glm(count ~ treatment_IL_6_10_ng_ml, family = poisson(), data = first_gene_data)
+poisson_model_IL_1B_01_ng_ml <- glm(count ~ treatment_IL_1B_01_ng_ml, family = poisson(), data = first_gene_data)
+poisson_model_IL_1B_10_ng_ml <- glm(count ~ treatment_IL_1B_10_ng_ml, family = poisson(), data = first_gene_data)
+
+summary(poisson_model_IL_6_01_ng_ml)
+summary(poisson_model_IL_6_10_ng_ml)
+summary(poisson_model_IL_1B_01_ng_ml)
+summary(poisson_model_IL_1B_10_ng_ml)
+```
+
+```{r}
+# Creating a summary data frame
+summary_data <- 
+  data.frame(
+    Treatment = 
+      c("IL-6 01 ng/ml", "IL-6 10 ng/ml", "IL-1B 01 ng/ml", "IL-1B 10 ng/ml"
+        ),
+    Log_Expected_Count_Intercept = 
+      c(coef(poisson_model_IL_6_01_ng_ml)["(Intercept)"],
+        coef(poisson_model_IL_6_10_ng_ml)["(Intercept)"],
+        coef(poisson_model_IL_1B_01_ng_ml)["(Intercept)"],
+        coef(poisson_model_IL_1B_10_ng_ml)["(Intercept)"]
+        ),
+    Coefficient = 
+      c(coef(poisson_model_IL_6_01_ng_ml)["treatment_IL_6_01_ng_ml"],
+        coef(poisson_model_IL_6_10_ng_ml)["treatment_IL_6_10_ng_ml"],
+        coef(poisson_model_IL_1B_01_ng_ml)["treatment_IL_1B_01_ng_ml"],
+        coef(poisson_model_IL_1B_10_ng_ml)["treatment_IL_1B_10_ng_ml"]),
+    P_Value = c(summary(poisson_model_IL_6_01_ng_ml)$coefficients["treatment_IL_6_01_ng_ml", "Pr(>|z|)"],
+                summary(poisson_model_IL_6_10_ng_ml)$coefficients["treatment_IL_6_10_ng_ml", "Pr(>|z|)"],
+                summary(poisson_model_IL_1B_01_ng_ml)$coefficients["treatment_IL_1B_01_ng_ml", "Pr(>|z|)"],
+                summary(poisson_model_IL_1B_10_ng_ml)$coefficients["treatment_IL_1B_10_ng_ml", "Pr(>|z|)"]
+                )
+)
+
+# Calculating actual expected counts and fold changes
+summary_data$Expected_Count = exp(summary_data$Log_Expected_Count_Intercept)
+summary_data$Fold_Change = exp(summary_data$Coefficient)
+
+row.names(summary_data) <- NULL
+
+# Print the summary table
+print(summary_data)
+
+```
+
+
+TBD. Finish the unsupervised visualisations. Interpret the results here. Calculate overdispersion. visualise models? Think about negative binomial model. 
 
 ## References {.unnumbered}
 

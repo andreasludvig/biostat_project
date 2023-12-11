@@ -18,7 +18,7 @@ library(ggplot2)
 dge_data <- readRDS("outputs/data_processed/dge_data.rds")
 ```
 
-#### Filter lowly expressed genes 
+#### Filter lowly expressed genes
 
 Many possibilities. Use the filterByExpr funtion, or filter manually, as here:
 
