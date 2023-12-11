@@ -1,0 +1,112 @@
+---
+title: "Differentiel gene expression"
+author: Andreas Svendsen
+---
+
+```{r}
+library(data.table)
+library(limma)
+library(edgeR)
+library(broom)
+```
+
+For this project we will just look at the CYP enzymes in the dataset
+
+Import the filtered and normalised data
+
+```{r}
+dge_data_norm <- readRDS("outputs/data_processed/dge_data_norm.rds")
+```
+
+```{r}
+keep_indices <- grep("^CYP", dge_data_norm$genes$symbol)
+
+cyp_data <- dge_data_norm[keep_indices, keep.lib.sizes = FALSE]
+cyp_data
+```
+
+When using the basic poisson regression model we assume that counts are poisson distribted with a mean equal to the variance. This model does not inherently account for library size or composition effect.
+
+```{r}
+# cyp_data is the subset of genes we want to investigate
+counts <- cyp_data$counts
+genes <- rownames(counts)
+samples <- colnames(counts)
+
+# Creating a long-format data frame
+data_long <- data.frame(gene = rep(genes, each = length(samples)),
+                        sample = rep(samples, times = length(genes)),
+                        count = as.vector(counts),
+                        treatment = cyp_data$samples$treatment) 
+
+```
+
+```{r}
+# Select the first gene
+first_gene <- unique(data_long$gene)[1]
+first_gene_data <- subset(data_long, gene == first_gene)
+
+# For each cytokine treatment, create a binary variable that is 1 for that specific cytokine treatment and 0 for the vehicle control.
+
+first_gene_data$treatment_IL_6_01_ng_ml <- as.numeric(first_gene_data$treatment == "01_ng_ml_IL_6")
+first_gene_data$treatment_IL_6_10_ng_ml <- as.numeric(first_gene_data$treatment == "10_ng_ml_IL_6")
+first_gene_data$treatment_IL_1B_01_ng_ml <- as.numeric(first_gene_data$treatment == "01_ng_ml_IL_1B")
+first_gene_data$treatment_IL_1B_10_ng_ml <- as.numeric(first_gene_data$treatment == "10_ng_ml_IL_1B")
+```
+
+```{r}
+# Poisson models for each cytokine treatment
+poisson_model_IL_6_01_ng_ml <- glm(count ~ treatment_IL_6_01_ng_ml, family = poisson(), data = first_gene_data)
+poisson_model_IL_6_10_ng_ml <- glm(count ~ treatment_IL_6_10_ng_ml, family = poisson(), data = first_gene_data)
+poisson_model_IL_1B_01_ng_ml <- glm(count ~ treatment_IL_1B_01_ng_ml, family = poisson(), data = first_gene_data)
+poisson_model_IL_1B_10_ng_ml <- glm(count ~ treatment_IL_1B_10_ng_ml, family = poisson(), data = first_gene_data)
+
+```
+
+```{r}
+summary(poisson_model_IL_6_01_ng_ml)
+summary(poisson_model_IL_6_10_ng_ml)
+summary(poisson_model_IL_1B_01_ng_ml)
+summary(poisson_model_IL_1B_10_ng_ml)
+
+```
+
+Creating a summary table:
+
+```{r}
+# Creating a summary data frame
+summary_data <- 
+  data.frame(
+    Treatment = 
+      c("IL-6 01 ng/ml", "IL-6 10 ng/ml", "IL-1B 01 ng/ml", "IL-1B 10 ng/ml"
+        ),
+    Log_Expected_Count_Intercept = 
+      c(coef(poisson_model_IL_6_01_ng_ml)["(Intercept)"],
+        coef(poisson_model_IL_6_10_ng_ml)["(Intercept)"],
+        coef(poisson_model_IL_1B_01_ng_ml)["(Intercept)"],
+        coef(poisson_model_IL_1B_10_ng_ml)["(Intercept)"]
+        ),
+    Coefficient = 
+      c(coef(poisson_model_IL_6_01_ng_ml)["treatment_IL_6_01_ng_ml"],
+        coef(poisson_model_IL_6_10_ng_ml)["treatment_IL_6_10_ng_ml"],
+        coef(poisson_model_IL_1B_01_ng_ml)["treatment_IL_1B_01_ng_ml"],
+        coef(poisson_model_IL_1B_10_ng_ml)["treatment_IL_1B_10_ng_ml"]),
+    P_Value = c(summary(poisson_model_IL_6_01_ng_ml)$coefficients["treatment_IL_6_01_ng_ml", "Pr(>|z|)"],
+                summary(poisson_model_IL_6_10_ng_ml)$coefficients["treatment_IL_6_10_ng_ml", "Pr(>|z|)"],
+                summary(poisson_model_IL_1B_01_ng_ml)$coefficients["treatment_IL_1B_01_ng_ml", "Pr(>|z|)"],
+                summary(poisson_model_IL_1B_10_ng_ml)$coefficients["treatment_IL_1B_10_ng_ml", "Pr(>|z|)"]
+                )
+)
+
+# Calculating actual expected counts and fold changes
+summary_data$Expected_Count = exp(summary_data$Log_Expected_Count_Intercept)
+summary_data$Fold_Change = exp(summary_data$Coefficient)
+
+row.names(summary_data) <- NULL
+
+# Print the summary table
+print(summary_data)
+
+```
+
+\
