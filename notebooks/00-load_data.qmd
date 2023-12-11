@@ -1,0 +1,102 @@
+---
+title: Load, tidy and save data
+author: Andreas Svendsen
+---
+
+Preamble
+
+Load our count matrix, gene annotation, and sample information. - Tidy the data - Create our DGEList object. Save this processed data in the output data folder
+
+#### Libraries
+
+```{r}
+library(data.table)
+library(RColorBrewer)
+library(limma)
+library(edgeR)
+```
+
+#### Load data
+
+```{r}
+# Load the count expression matrix. Rows represents genes, and columns samples.
+
+expression_raw <- fread("inputs/data_raw/expression.txt")
+expression_raw
+
+# Load the sample information file
+sample_info <- fread("inputs/data_raw/info.txt")
+sample_info
+
+# Load the gene annotation file
+annotation_info <- fread("inputs/data_raw/annotation.txt")
+annotation_info
+```
+
+#### Tidy data
+
+```{r}
+# Convert counts data to matrix. Mostly because of convension, but also for
+# performance reasons. However, EdgeR do allow DFs now.
+expression_raw <- as.matrix(expression_raw)
+
+# Add a color designating group _color column to the sample info
+color_scheme <-
+  brewer.pal(
+    n = length(unique(sample_info$treatment)), # n colors = unique treatments
+    name = "Paired" # Palette name to get the color hexadecimal number from.
+  )
+
+# Add hexidecimal for black and put first in the vector.
+color_scheme <- append(color_scheme, values = "#000000", after = 0)
+# Remove the last hexadecimal color code, so we are back to one color/treatment
+color_scheme <- color_scheme[-9]
+color_scheme # Looks good. 8 color codes for 8 treatments
+
+# label the values with in the color scheme object with the treatments names:
+color_scheme <- setNames(
+  object = color_scheme,
+  nm = unique(sample_info$treatment)
+)
+color_scheme # Each color code named by a treatment.
+
+# Subset the color_scheme vector by the treatment col. Add the resulting string
+# to a group_color column:
+sample_info$group_color <- color_scheme[sample_info$treatment]
+sample_info # Looks good
+
+# Convert grouping variables to factors for proper plotting later on.
+sample_info[, `:=`(
+  group = factor(group, levels = unique(group)),
+  treatment = factor(treatment, levels = unique(treatment)),
+  group_color = factor(group_color, levels = unique(group_color))
+)]
+str(sample_info)
+
+# Add ensemble_id concatenated with gene symbol to the annotation dataframe
+annotation_info[, id_symbol := paste(ENSEMBLE_ID, symbol, sep = ";")]
+annotation_info
+```
+
+#### Create DGEList
+
+```{r}
+dge_data <- DGEList(
+  counts = expression_raw,
+  genes = annotation_info,
+  samples = sample_info
+)
+```
+
+#### Save the DGEList
+
+```{r}
+saveRDS(
+  object = dge_data,
+  file = "outputs/data_processed/dge_data.rds"
+)
+```
+
+```{r}
+rm(list = ls())
+```
